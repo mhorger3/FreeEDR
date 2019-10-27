@@ -1,0 +1,250 @@
+\documentclass{scrreprt}
+\usepackage{enumitem}
+\usepackage{listings}
+\usepackage{underscore}
+\usepackage[ddmmyyyy]{datetime}
+\renewcommand{\dateseparator}{--}
+\usepackage[bookmarks=true]{hyperref}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{url}
+\usepackage{graphicx}
+
+\newenvironment{enum}
+{\begin{enumerate}[label*=\arabic*.][resume]}
+{\end{enumerate}}
+
+\hypersetup{
+    bookmarks=false,    % show bookmarks bar?
+    pdftitle={Software Requirement Specification},    % title
+    pdfauthor={Matt Horger},                     % author
+    pdfsubject={TeX and LaTeX},                        % subject of the document
+    pdfkeywords={TeX, LaTeX, graphics, images}, % list of keywords
+    colorlinks=true,       % false: boxed links; true: colored links
+    linkcolor=blue,       % color of internal links
+    citecolor=black,       % color of links to bibliography
+    filecolor=black,        % color of file links
+    urlcolor=purple,        % color of external links
+    linktoc=page            % only page is linked
+}%
+\def\myversion{2.0.0 }
+\date{}
+%\title{%
+
+%}
+\usepackage{hyperref}
+\begin{document}
+
+\begin{flushright}
+    \rule{16cm}{5pt}\vskip1cm
+    \begin{bfseries}
+        \Huge{SOFTWARE REQUIREMENTS\\ SPECIFICATION}\\
+        \vspace{1.0cm}
+        for\\
+        \vspace{1.0cm}
+        FreeEDR\\
+        \LARGE{Version \myversion approved}\\
+        \vspace{1.5cm}
+        Prepared by:\\
+    Bryan Bolesta\\
+Ryan Fiers\\
+ Declan Kelly\\
+Matthew Horger\\
+ Layla Phills\\
+ Zachary Santoro\\
+ Marisa Tranchitella\\
+        \vspace{1.9cm}
+        Team: \textbf{FreeEDR}\\
+        \today\\
+    \end{bfseries}
+\end{flushright}
+
+\tableofcontents
+
+\chapter*{Revision History}
+
+\begin{center}
+    \begin{tabular}{|c|c|c|c|}
+        \hline
+        Name & Date & Reason For Changes & Version\\
+        \hline
+        1.0.0 & \formatdate{18}{10}{19} & Initial Structure & mhorger\\
+        \hline
+        1.1.0 & \formatdate{21}{10}{19} & Design Constrains & dkelly, bbolesta\\
+        \hline
+        1.1.1 & \formatdate{24}{10}{19} & User Characteristics & lphills\\
+        \hline
+        2.0.0 & \formatdate{27}{10}{19} & Draft Submission & mhorger\\
+        \hline
+    \end{tabular}
+\end{center}
+
+\chapter{Introduction}
+
+\section{Purpose of Document}
+The purpose of this software requirement specification document is to outline the functionality and features of our proposed project. We fully expect that this document will be detailed enough about how it will be expected to perform, maintained, and potentially developed further. This document will not describe how the system works in detail or how infrastructure teams should utilize the project. The intended audience of this document is three-fold: first is developers who can review the project’s requirements to see where time and research efforts can be utilized to improve the project. Second is UAT testers who can test our product when deployed in an environment to find potential security risks or unexpected bugs that stem from requirements. Lastly is infrastructure team members of an organization (end-users) interested in implementing our system to enhance their security footprint of workstations. 
+
+\section{Project Scope}
+This project will consist of creating a open-source endpoint detection and response system for small infrastructure teams and organizations to utilize free of charge. The project will be completed by June 2020 for a total time allocation of 9 months. Continuous improvements and support of this project will be assumed by Security Risk Advisors after the completion of the initial deployment/release phase. 
+
+\section{Definitions, Acronyms, and Abbreviations}
+\begin{enumerate}
+    \item AD: active directory, a package of special services to manage permissions and resources on Windows workstations
+    \item API: application programming interface, technology used for transmitting data between sources such as clients, servers, databases, etc.
+    \item EDR: also known as endpoint detection and response, a technology used to address the needs for continuous coverage against advanced threats.
+    \item GPO: group policy object, used when policy settings need to apply to multiple Windows workstations
+    \item Sigma: generic, open signature format that allows relevant log events to be reported straightforward
+    \item SigmaC: tool used to translate Sigma format rules to the language of choice
+    \item SIEM: Security Information and Event Management
+    \item SIRT: Security Incident Response Team
+    \item QA: Quality Assurance
+\end{enumerate}
+
+\section{Overview}
+Organizations that don’t have a significant security budget can find it difficult to include workstations in their monitoring scope. Forwarding logs from all the organization’s workstations can be expensive because most SIEMs are priced based on log ingestion and tools such as EDR are just as expensive. This project aims to setup a series of scripts which will allow organizations who don’t have the ability to purchase or implement an enterprise solution.  This solution is aimed at devices running Windows as it relies on querying Windows events using PowerShell.
+
+\chapter{Overall Description}
+
+\section{Product Functions}
+
+\begin{enumerate}
+\item Provide a series of PowerShell scripts to generate security alerts by querying Windows events on Windows endpoints.
+\item Create a repository server to store detection rules and be used in the process of updating and delivering new rules to Windows endpoints.
+\item Generate various process and network detection rules to used by our scripts to gather event forensics and generate Custom Windows Events.
+\item Provide methods for forwarding newly generated Custom Windows Events to SIEM solutions, and for setting up email and message alerts when these Custom Windows Events are triggered.
+\item Provide an interactive dashboard in order to produce reports, logs, and other auditable information detailing specific time-stamped information.
+
+\end{enumerate}
+
+\section{User Characteristics}
+
+\subsection{Script Manager}
+This user is responsible for the retainment, management, and deployment of the provided PowerShell scripts. The script manager must have the privileges and means to deploy and run the scripts on Windows endpoints across the organization. The main function of this user is to deploy the series of scripts to any in-scope endpoints, retain the scripts, and re-deploy scripts when necessary.
+
+\subsection{Incident Response Manager}
+
+This user is responsible for ensuring that alerting methods are set-up and properly configured. This user is also responsible for reviewing, responding, and analyzing security alerts. The Incident Response Manager must have view access to the platform that the alerts are being sent (SIEM, Email, or Message). The main function of the Incident Response Manager is to review and respond to the security alerts generated by the FreeEDR scripts.
+
+
+\subsection{Incident Response Supporter}
+
+This user is responsible for aiding the Incident Response Manager in responding to incidents in real time. This user must have the privileges and means to view the reports curated specifically for less technical people. The main function of the incident response supporter is to follow basic instructions to complete tasks that will offset the responsibilities of the Incident Response Manager during an incident response. 
+
+\subsection{System Auditor}
+
+This user is responsible for auditing the functionality and use of the system. The auditor must have view access of all system and user logs. This user must also have access to any previous audit reports. The main function of this user is to ensure that best practices were followed, the system is being used as effectively as possible and to report any compliance issues discovered to the appropriate parties.
+
+\subsection{Dashboard Infrastructure Manager}
+
+This user is responsible for maintaining and deploying future releases of the Audit Dashboard for auditors to view. The infrastructure manager must make sure that the dashboard is consistent with the information that is being produced for the system auditor, and have continuous support capacities if some errors were to occur with the reporting tool.
+
+\chapter{Specific Requirements}
+
+\section{Functional Requirements}
+
+\begin{enumerate}[label*=R\arabic*.]
+    \item Server - Rule Storage
+    \begin{enumerate}[label*=\arabic*.]
+          \item Server will store correlation logic for process and network events
+	\item Server will allow read access for clients in the deployment
+	\item Server will connect with threat intelligence sources to discover new correlation rules
+	\item Server will allow the system administrator to update correlation logic
+    \end{enumerate}
+\end{enumerate}
+
+\begin{enumerate}[label*=R\arabic*.]
+    \item Client - Rule Processing
+    \begin{enumerate}[label*=\arabic*.]
+         \item Client will communicate with the Rule Storage Server to pull down correlation rules.
+	\item Client will check the rules against the event log every hour.
+\item Client will connect with application APIs to perform network and process forensics on an event.
+\item Client will store process and network forensic information in a single location.
+\item Client will store forensic information for an amount of time set by the system administrator.
+\item Client will forward forensic event information to a central location to be actioned by an analyst.
+\item Client will perform a different type of forensics for process and network events.
+\item Client will be able to identify the difference between process events and network events.
+
+    \end{enumerate}
+\end{enumerate}
+
+\begin{enumerate}[label*=R\arabic*.]
+    \item Dashboard
+    \begin{enumerate}[label*=\arabic*.]
+        \item Dashboard must be hosted on the same server used for rule storage due to security. This is a design constraint due to the way the dashboard will process information.
+	\item Dashboard must be accessible to all clients to view previously generated reports as well as produce reports.
+\item Dashboard must be flexible for modifications in order to add/remove reports as needed by auditors.
+\item Dashboard must allow clients to select a range of dates for report generation.
+\item Dashboard must allow clients to select a format to download their generated reports.
+\item Dashboard must have a responsive algorithm that allows for regeneration of reports once fresh data is loaded in a folder (see Data Requirements further on the data types).
+\item Dashboard should be accessible 90\% of normal business hours, with the exception being disaster recovery downtime / failover procedures.
+\item Dashboard must have an option to export a report to send via interdepartmental communication (email, IM, etc).
+    \end{enumerate}
+\end{enumerate}
+
+
+\section{Non-Functional Requirements}
+
+\begin{enumerate}[label*=N\arabic*.]
+    \item Hardware
+    \begin{enumerate}[label*=\arabic*.]
+\item The system will only use hardware in compliance with SRA’s minimum security requirements. 
+\item The system will be stored on a secure and segmented part of the CyberDragon’s server until system ownership is transferred to SRA.
+    \end{enumerate}
+\end{enumerate}
+
+\begin{enumerate}[label*=N\arabic*.]
+    \item Network
+    \begin{enumerate}[label*=\arabic*.]
+\item The system will not use or interact with the SRA network in any way that violates any of SRA’s privacy policies. 
+\item The system will have 98.9\% availability on the network during standard business hours.
+\item The system will return data within 15 seconds of the customer’s request. 
+
+    \end{enumerate}
+\end{enumerate}
+
+\begin{enumerate}[label*=N\arabic*.]
+    \item Deployment
+    \begin{enumerate}[label*=\arabic*.]
+\item The system will be able to handle all exceptions created by erroneous user input. 
+\item All deployed versions of this system must have passed all QA / UAT tests.
+\item The system will consume at most 250 megabytes of memory.
+\item The system’s Mean Time to Change (MTTC) for issues will be < 3 person days. 
+\item The system will satisfy all of Nick Ascoli’s, our external stakeholder for this project, UI preferences when system ownership is transferred to SRA.
+
+
+    \end{enumerate}
+\end{enumerate}
+
+
+\section{Data Requirements}
+
+\begin{enumerate}[label*=D\arabic*.]
+\item Clients will not be able to write to the rules repository.
+\item Clients will be presented with data on endpoint events (i.e. registry modifications, cross-process events, file executions, network connections).
+\item Client will have access to relevant data from threat intelligence platforms.
+\item Dashboard should have access to all necessary data in order to produce reports. This data includes forensic event information, user machine configuration, and standard log outputs.
+\item Dashboard must have a service account associated with operations in order to track requests, actions, etc in regards to manipulating data.
+\item Data for dashboard must be sourced via a folder for easy data storage and retrieval. 
+\item Data used for report generations must not have a lock placed on the file in order to allow for concurrent operations.
+\item Data displayed in dashboard must be in a concise, readable format with an option for details to be viewed separately. 
+\item Data transmitted via every API must be under the proper protocols for security (POST) and sensitive information must be encrypted before transit.
+\item Data must be kept for up to 5 years. Data past 5 years is outside the jurisdiction of auditable actions. 
+\end{enumerate}
+
+
+\section{Design Constraints}
+
+\begin{enumerate}[label*=DR\arabic*.]
+\item Correlation rules should be written in Sigma to allow sharing through threat intelligence platforms such as Threat Alert Logic Repository (TALR)
+\item Rules must be translated to PowerShell Get-Event Queries as this is the supported language in Sigma.
+\item System should be deployed in a Windows environment due to the reliance on Get-Event PowerShell queries.
+\item Clients must deploy Syson to capture the appropriate events for the system to perform properly
+
+\end{enumerate}
+
+\begin{thebibliography}{9}
+
+\end{thebibliography}
+
+
+\end{document}
