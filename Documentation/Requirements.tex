@@ -160,7 +160,7 @@ This user is responsible for maintaining and deploying future releases of the Au
     \end{enumerate} 
 \end{enumerate}
 
-\begin{enumerate}[label*=R\arabic*.]
+\begin{enumerate}[resume*]
     \item Client - Rule Processing
     \begin{enumerate}[label*=\arabic*.]
          \item FreeEDR will establish a communication channel between clients and the Rule Storage Server to pull down correlation rules.
@@ -176,7 +176,7 @@ This user is responsible for maintaining and deploying future releases of the Au
     \end{enumerate}
 \end{enumerate}
 
-\begin{enumerate}[label*=R\arabic*.]
+\begin{enumerate}[resume*]
     \item Dashboard
     \begin{enumerate}[label*=\arabic*.]
         \item  FreeEDR must allow for communication between the dashboard and the secured repository used for rule storage.
@@ -191,7 +191,7 @@ This user is responsible for maintaining and deploying future releases of the Au
     \end{enumerate}
 \end{enumerate}
 
-\begin{enumerate}[label*=R\arabic*.]
+\begin{enumerate}[resume*]
     \item Data
     \begin{enumerate}[label*=\arabic*.]
 \item FreeEDR will have an established process in order to track requests, actions, etc in regards to manipulating data in the system.
@@ -215,7 +215,7 @@ This user is responsible for maintaining and deploying future releases of the Au
     \end{enumerate}
 \end{enumerate}
 
-\begin{enumerate}[label*=N\arabic*.]
+\begin{enumerate}[resume*]
     \item Network
     \begin{enumerate}[label*=\arabic*.]
 \item FreeEDR will not use or interact with the Security Risk Advisors network in any way that violates any of their privacy policies. 
@@ -225,7 +225,7 @@ This user is responsible for maintaining and deploying future releases of the Au
     \end{enumerate}
 \end{enumerate}
 
-\begin{enumerate}[label*=N\arabic*.]
+\begin{enumerate}[resume*]
     \item Deployment
     \begin{enumerate}[label*=\arabic*.]
 \item FreeEDR will be able to handle all exceptions created by erroneous user input. 
@@ -236,7 +236,7 @@ This user is responsible for maintaining and deploying future releases of the Au
     \end{enumerate}
 \end{enumerate}
 
-\begin{enumerate}[label*=N\arabic*.]
+\begin{enumerate}[resume*]
     \item Other
     \begin{enumerate}[label*=\arabic*.]
 \item FreeEDR will provide training information to clients interested in being able to identify the difference between process events and network events.
@@ -278,38 +278,38 @@ This user is responsible for maintaining and deploying future releases of the Au
 \end{enumerate}
 
 
-\begin{enumerate}[label*=D\arabic*.]
+\begin{enumerate}[resume*]
     \item Rule
 	\subitem A correlation rule is user-defined logic that can be used to trigger security alerts when endpoints are targeted. For the purposes of FreeEDR, certain data fields can be customized in order to provide modified functionality. An example rule can have the following data fields:
     \begin{enumerate}[label*=\arabic*.]
-	\item title
+	\item Title
 	\subitem Suspicious SQL Error Messages
-	\item status
+	\item Status
 	\subitem experimental
-	\item description
+	\item Description
 	\subitem Detects SQL error messages that indicate probing for an injection attack
-	\item author
+	\item Author
 	\subitem Bjoern Kimminich
-	\item references
+	\item References
 	\subitem http://www.sqlinjection.net/errors
-	\item logsource
+	\item Logsource
 	\subitem   category: application
   	\subitem   product: sql
-	\item detetction
+	\item Detetction
 	\subitem keywords
 	\subitem Oracle: quoted string not properly terminated
 	\subitem MySQL: You have an error in your SQL syntax
 	\subitem SQL Server: Unclosed quotation mark
-	\item falsepositives
+	\item Falsepositives
 	\subitem Application bugs
-	\item level
+	\item Level
 	\subitem high
 \end{enumerate}
 \end{enumerate}
 
-\begin{enumerate}[label*=D\arabic*.]
+\begin{enumerate}[resume*]
     \item Rule Repository
-	\subitem A rule repository is simply a directory structure that can securely store rules in the file format above. Example data structures include: 
+	\subitem A rule repository is a directory structure that can securely store rules in the file format above. Example data structures include: 
     \begin{enumerate}[label*=\arabic*.]
 	\item NTFS
 	\item FAT32
@@ -317,7 +317,7 @@ This user is responsible for maintaining and deploying future releases of the Au
 \end{enumerate}
 \end{enumerate}
 
-\begin{enumerate}[label*=D\arabic*.]
+\begin{enumerate}[resume*]
     \item Network Log
 	\subitem A network log captures the information when any traffic occurs between clients and endpoints. Network logs typically have the following information:
     \begin{enumerate}[label*=\arabic*.]
