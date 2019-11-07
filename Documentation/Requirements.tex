@@ -1,0 +1,386 @@
+\documentclass{scrreprt}
+\usepackage{enumitem}
+\usepackage{listings}
+\usepackage{underscore}
+\usepackage[ddmmyyyy]{datetime}
+\renewcommand{\dateseparator}{--}
+\usepackage[bookmarks=true]{hyperref}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{url}
+\usepackage{graphicx}
+
+\newenvironment{enum}
+{\begin{enumerate}[label*=\arabic*.][resume]}
+{\end{enumerate}}
+
+\hypersetup{
+    bookmarks=false,    % show bookmarks bar?
+    pdftitle={Software Requirement Specification},    % title
+    pdfauthor={Matt Horger},                     % author
+    pdfsubject={TeX and LaTeX},                        % subject of the document
+    pdfkeywords={TeX, LaTeX, graphics, images}, % list of keywords
+    colorlinks=true,       % false: boxed links; true: colored links
+    linkcolor=blue,       % color of internal links
+    citecolor=black,       % color of links to bibliography
+    filecolor=black,        % color of file links
+    urlcolor=purple,        % color of external links
+    linktoc=page            % only page is linked
+}%
+\def\myversion{3.0.0 }
+\date{}
+%\title{%
+
+%}
+\usepackage{hyperref}
+\begin{document}
+
+\begin{flushright}
+    \rule{16cm}{5pt}\vskip1cm
+    \begin{bfseries}
+        \Huge{SOFTWARE REQUIREMENTS\\ SPECIFICATION}\\
+        \vspace{1.0cm}
+        for\\
+        \vspace{1.0cm}
+        FreeEDR\\
+        \LARGE{Version \myversion approved}\\
+        \vspace{1.5cm}
+        Prepared by:\\
+    Bryan Bolesta\\
+Ryan Fiers\\
+ Declan Kelly\\
+Matthew Horger\\
+ Layla Phills\\
+ Zachary Santoro\\
+ Marisa Tranchitella\\
+        \vspace{1.9cm}
+        Team: \textbf{FreeEDR}\\
+        \today\\
+    \end{bfseries}
+\end{flushright}
+
+\tableofcontents
+
+\chapter*{Revision History}
+
+\begin{center}
+    \begin{tabular}{|c|c|c|c|}
+        \hline
+        Name & Date & Reason For Changes & Version\\
+        \hline
+        1.0.0 & \formatdate{18}{10}{19} & Initial Structure & mhorger\\
+        \hline
+        1.1.0 & \formatdate{21}{10}{19} & Design Constrains & dkelly, bbolesta\\
+        \hline
+        1.1.1 & \formatdate{24}{10}{19} & User Characteristics & lphills\\
+        \hline
+        2.0.0 & \formatdate{27}{10}{19} & Draft Submission & mhorger\\
+        \hline
+        3.0.0 & \formatdate{03}{11}{19} & Final Submission & mhorger\\
+        \hline
+    \end{tabular}
+\end{center}
+
+\chapter{Introduction}
+
+\section{Purpose of Document}
+The purpose of this software requirement specification document is to outline the functionality and features of our proposed project. The end goal of this document is to assure that the intended audience of FreeEDR understands how FreeEDR will perform, maintained, and potentially developed further. This document will not describe how the system works in detail or how infrastructure teams should utilize the project. The intended audience of this document is three-fold: first is infrastructure team members of an organization (end-users) interested in implementing our system to enhance their security footprint of workstations.  Second is developers who can review the project’s requirements to see where time and research efforts can be utilized to improve the project. Lastly is UAT testers who can test our product when deployed in an environment to find potential security risks or unexpected bugs that stem from requirements. 
+
+\section{Project Scope}
+FreeEDR is an open-source endpoint detection and response system for small infrastructure teams and organizations to utilize free of charge. FreeEDR will be completed by June 2020 for a total time allocation of 9 months. Continuous improvements and support of this project will be assumed by Security Risk Advisors, located at 1760 Market Street in Philadelphia, PA after the completion of the initial deployment/release phase. 
+
+
+\section{Definitions, Acronyms, and Abbreviations}
+\begin{enumerate}
+    \item AD: active directory, a package of special services to manage permissions and resources on Windows workstations
+    \item API: application programming interface, technology used for transmitting data between sources such as clients, servers, databases, etc.
+    \item EDR: also known as endpoint detection and response, a technology used to address the needs for continuous coverage against advanced threats.
+    \item GPO: group policy object, used when policy settings need to apply to multiple Windows workstations
+    \item Sigma: generic, open signature format that allows relevant log events to be reported straightforward
+    \item SigmaC: tool used to translate Sigma format rules to the language of choice
+    \item SIEM: Security Information and Event Management
+    \item SIRT: Security Incident Response Team
+    \item SOC1: also known as a system and organization controls report, used for making sure an organization’s internal control procedures are being properly followed.
+    \item Threat Intelligence Sources: security feeds from vendors, government / public, and private sources that provide information about known IT vulnerabilities and risks for organizations.
+    \item QA: Quality Assurance
+\end{enumerate}
+
+\section{Overview}
+Organizations that don’t have a significant security budget can find it difficult to include workstations in their monitoring scope. Forwarding logs from all the organization’s workstations can be expensive because most SIEMs are priced based on log ingestion and tools such as EDR are just as expensive. This project aims to setup a series of scripts which will allow organizations who don’t have the ability to purchase or implement an enterprise solution to monitor workstation traffic on a domain network.
+
+\chapter{Overall Description}
+
+\section{Product Functions}
+
+\begin{enumerate}
+\item FreeEDR will generate numerous security alerts against internal network traffic where the system is deployed in.
+\item FreeEDR will deploy a secure repository which can update, deliver, and maintain rules that produce said security alerts above. 
+\item FreeEDR will allow for internal users to create customizable rules and network processes that are stored on the mentioned secured repository. 
+\item FreeEDR will send automatic email and message alerts when security alerts are activated within the system.
+\item FreeEDR will provide an interactive dashboard in order to produce reports, logs, and other auditable information detailing specific time-stamped information.
+
+\end{enumerate}
+
+\section{User Characteristics}
+
+\subsection{Client}
+The Client is responsible for having their workstation’s network traffic monitored in an organization where FreeEDR is deployed at. This client will have no privileges to modify or change any aspect of FreeEDR’s deployment in an environment. 
+
+\subsection{Script Manager}
+The Script Manager is responsible for the retainment, management, and deployment of the provided PowerShell scripts. The script manager must have the privileges and means to deploy and run the scripts on Windows endpoints across the organization. The main function of this user is to deploy the series of scripts to any in-scope endpoints, retain the scripts, and re-deploy scripts when necessary.
+
+\subsection{Incident Response Manager}
+
+This Incident Response Manager is responsible for ensuring that alerting methods are set-up and properly configured. This user is also responsible for reviewing, responding, and analyzing security alerts. The Incident Response Manager must have view access to the platform that the alerts are being sent (SIEM, Email, or Message). The main function of the Incident Response Manager is to review and respond to the security alerts generated by the FreeEDR scripts.
+
+
+\subsection{Incident Response Supporter}
+
+The Incident Response Supporter is responsible for aiding the Incident Response Manager in responding to incidents in real time. This user must have the privileges and means to view the reports curated specifically for less technical people. The main function of the incident response supporter is to follow basic instructions to complete tasks that will offset the responsibilities of the Incident Response Manager during an incident response. 
+
+\subsection{System Auditor}
+
+The System Auditor is responsible for auditing the functionality and use of the system. The auditor must have view access of all system and user logs. This user must also have access to any previous audit reports. The main function of the system auditor is to ensure that best practices were followed, the system is being used as effectively as possible and to report any compliance issues discovered to the appropriate parties.
+
+\subsection{Dashboard Infrastructure Manager}
+
+The Dashboard Infrastructure Manager is responsible for maintaining and deploying future releases of the Audit Dashboard for auditors to view. The infrastructure manager must make sure that the dashboard is consistent with the information that is being produced for the system auditor, and have continuous support capacities if some errors were to occur with the reporting tool.
+
+\chapter{Specific Requirements}
+
+\section{Functional Requirements}
+
+\begin{enumerate}[label*=R\arabic*.]
+    \item Server - Rule Storage
+    \begin{enumerate}[label*=\arabic*.]
+          \item FreeEDR will allow for script managers to store correlation logic for process and network events.
+	\item FreeEDR will allow read access to the contents of the server for Incident Response Managers to monitor deployments to the secured repository.
+	\item FreeEDR server will be allowed to communicate and connect with threat intelligence sources to discover new correlation rules.
+	\item FreeEDR will grant security access to the organization’s system administrator to update correlation logic on the server.
+	\item FreeEDR will restrict read access from unauthorized clients in the organization who have not received internal approval to view the server. 
+    \end{enumerate} 
+\end{enumerate}
+
+\begin{enumerate}[resume*]
+    \item Client - Rule Processing
+    \begin{enumerate}[label*=\arabic*.]
+         \item FreeEDR will establish a communication channel between clients and the Rule Storage Server to pull down correlation rules.
+	\item FreeEDR must restrict clients from writing to the rules repository.
+\item FreeEDR will force clients to check correlation rules against the event log every hour. This process should be non-disruptive to normal client activity.
+\item FreeEDR will establish network security protocols to permit clients to communicate with APIs.
+\item FreeEDR will allow clients to receive information from APIs to perform network and process forensics on an event.
+\item FreeEDR must be able to store clients’ process and network forensic information within the organization’s filesystem.
+\item FreeEDR will store the referenced forensic information for an amount of time set by the organization’s system administrator.
+\item FreeEDR must forward forensic event from clients to the Incident Response Manager in order for them to properly perform their user roles.
+\item FreeEDR will be able to distinguish which forensics must be applied for different client process and network events.
+
+    \end{enumerate}
+\end{enumerate}
+
+\begin{enumerate}[resume*]
+    \item Dashboard
+    \begin{enumerate}[label*=\arabic*.]
+        \item  FreeEDR must allow for communication between the dashboard and the secured repository used for rule storage.
+	\item FreeEDR must permission all users read access to the deployed dashboard. FreeEDR must block all external traffic to the dashboard.
+\item FreeEDR must provide the ability for clients to view previously generated reports as well as produce fresh reports.
+\item FreeEDR must allow for the Dashboard Infrastructure Manager to permission certain clients to view specific reports and actions. 
+\item FreeEDR will allow clients to select a range of dates for report generation within the dashboard.
+\item FreeEDR will allow clients to select a specific format to download their generated reports from the dashboard.
+\item FreeEDR must have an option to export a dashboard report to send via interdepartmental communication (email, IM, etc).
+\item FreeEDR will allow for the dashboard to have a responsive algorithm that allows for regeneration of reports once fresh data is produced. Please see Data Requirements further on the data types.
+\item FreeEDR must maintain the dashboard so that it is accessible 90\% of normal business hours, with the exception being disaster recovery downtime / failover procedures.
+    \end{enumerate}
+\end{enumerate}
+
+\begin{enumerate}[resume*]
+    \item Data
+    \begin{enumerate}[label*=\arabic*.]
+\item FreeEDR will have an established process in order to track requests, actions, etc in regards to manipulating data in the system.
+\item FreeEDR will present Incident Response teams with data on endpoint events (i.e. registry modifications, cross-process events, file executions, network connections).
+\item FreeEDR must have 100\% uptime access to relevant data sources needed for operations. 
+\item FreeEDR must keep data for up to 5 years in order to comply with SOC1 reporting / audit procedures. Data past 5 years is outside the jurisdiction of auditable actions and can be disposed.
+\item Data transmitted via every API in FreeEDR must be under the proper protocols for security (POST) and sensitive information must be encrypted before transit.
+\item FreeEDR should allow the dashboard to access all necessary data in order to produce reports. This data includes forensic event information, user machine configuration, and standard log outputs.\
+\item FreeEDR must display data in the dashboard in a concise, readable format with an option for details to be viewed separately. 
+\end{enumerate}
+\end{enumerate}
+
+
+\section{Non-Functional Requirements}
+
+\begin{enumerate}[label*=N\arabic*.]
+    \item Hardware
+    \begin{enumerate}[label*=\arabic*.]
+\item FreeEDR will only use hardware in compliance with Security Risk Advisors minimum security requirements. 
+\item FreeEDR will be deployed on a secure and segmented part of the Drexel CyberDragon’s server until system ownership is transferred to Security Risk Advisors.
+    \end{enumerate}
+\end{enumerate}
+
+\begin{enumerate}[resume*]
+    \item Network
+    \begin{enumerate}[label*=\arabic*.]
+\item FreeEDR will not use or interact with the Security Risk Advisors network in any way that violates any of their privacy policies. 
+\item FreeEDR will have an exceptionally high network availability during standard business hours. The target availability for the system is 98.9\%.
+\item FreeEDR will have an exceptionally high network data retrieval response time during standard business hours. The target response time is within 15 seconds of the client’s request, with larger data requests returning within 5 minutes of the request.
+
+    \end{enumerate}
+\end{enumerate}
+
+\begin{enumerate}[resume*]
+    \item Deployment
+    \begin{enumerate}[label*=\arabic*.]
+\item FreeEDR will be able to handle all exceptions created by erroneous user input. 
+\item All deployed versions of FreeEDR must have passed all QA /UAT tests.
+\item FreeEDR will consume at most 250 megabytes of memory.
+\item FreeEDR’s Mean Time to Change (MTTC) for issues will be < 3 person days. 
+
+    \end{enumerate}
+\end{enumerate}
+
+\begin{enumerate}[resume*]
+    \item Other
+    \begin{enumerate}[label*=\arabic*.]
+\item FreeEDR will provide training information to clients interested in being able to identify the difference between process events and network events.
+\item FreeEDR’s dashboard must be flexible for modifications in order to add/remove reports as needed by auditors.
+    \end{enumerate}
+\end{enumerate}
+
+
+\section{Data Requirements}
+
+\begin{enumerate}[label*=D\arabic*.]
+    \item Event
+	\subitem An event is an object captured and displayed by an Event Viewer. These events are triggered by the rules, which are demonstrated below. A sample event is one that has the following data fields:
+	     \subitem
+	\begin{tabular}{|c|c|}
+        \hline
+         \textbf{Data Field} & \textbf{Example Data}\\
+        \hline
+         Event Type & Critical, Error, Warning \\
+        \hline
+        Event ID & 111\\
+        \hline
+	Source & (Any name of application) \\ 
+        \hline
+	Log Location & (Path of application) \\
+        \hline
+	Date and Time &  11-03-2019 T12:43:00Z\\
+	\hline
+	Task Category & (Any user defined category)\\
+	\hline
+	Keywords & (Any user defined keyword)\\
+	\hline
+	Computer & DESKTOP-341k3\\
+	\hline
+	User & SRAPROD/nascoli\\
+	\hline
+	OpCode & 1\\
+	\hline
+	More Information & (Any details go here)\\
+	\hline
+
+      \end{tabular}
+\end{enumerate}
+
+
+\begin{enumerate}[resume*]
+    \item Rule
+	\subitem A correlation rule is user-defined logic that can be used to trigger security alerts when endpoints are targeted. For the purposes of FreeEDR, certain data fields can be customized in order to provide modified functionality. An example rule can have the following data fields:
+	\subitem	
+ 	\begin{tabular}{|c|c|}
+        \hline
+         \textbf{Data Field} & \textbf{Example Data}\\
+        \hline
+	Title & Suspicious SQL Error Messages\\
+	\hline
+	Status & experimental\\
+\hline
+Description& Detects SQL error messages that indicate probing for an injection attack\\
+\hline
+Author & Bjoern Kimminich\\
+\hline
+References & http://www.sqlinjection.net/errors\\
+\hline
+Logsource &  category: application\\
+\hline
+Detetction & keywords\\
+\hline
+keywords & Oracle: quoted string not properly terminated\\
+\hline
+Falsepositives &  Application bugs\\
+\hline
+Level & high\\
+\hline
+\end{tabular}
+\end{enumerate}
+
+\begin{enumerate}[resume*]
+    \item Rule Repository
+	\subitem A rule repository is a directory structure that can securely store rules in the file format above. Example data structures include: 
+    \begin{enumerate}[label*=\arabic*.]
+	\item NTFS
+	\item FAT32
+	\item Cloud Storage
+\end{enumerate}
+\end{enumerate}
+
+\begin{enumerate}[resume*]
+    \item Network Log
+	\subitem A network log captures the information when any traffic occurs between clients and endpoints. Network logs typically have the following information:
+         \subitem
+	\begin{tabular}{|c|c|}
+        \hline
+         \textbf{Data Field} & \textbf{Example Data}\\
+        \hline
+         Machine Name & DESKTOP-341k3 \\
+        \hline
+        User Account & SRAPROD/nascoli\\
+        \hline
+	Date Time of Request &  11-03-2019 T12:43:00Z \\ 
+        \hline
+	IP Address & 192.141.53.2 \\
+        \hline
+	HTTP Response Status Code &  202 OK\\
+	\hline
+	Headers & Keep-Alive: *\\
+	\hline
+	Requested IP Address & 64.10.343.12\\
+	\hline
+	Number of Packets Transmitted & 333\\
+	\hline
+\end{tabular}
+\end{enumerate}
+
+\section{Design Constraints}
+
+\begin{enumerate}[label*=DR\arabic*.]
+\item FreeEDR system architecture must be split in order to establish a server/client relationship for security measures.
+\item Clients checking for new correlation rules in FreeEDR must be an established fixed interval to allow for appropriate time to gather said rules that have been recently deployed.
+\item Client process and event information must be stored in a single shared location in order for the FreeEDR’s dashboard to know where to access the information.
+\item FreeEDR’s reporting dashboard must be hosted on the same server used for rule storage due to security constraints for processing information.
+\item Correlation rules should be written in Sigma to allow sharing through threat intelligence platforms such as Threat Alert Logic Repository (TALR)
+\item FreeEDR correlation rules must be translated to PowerShell Get-Event Queries as this is the supported language in Sigma.
+\item FreeEDR must be deployed in a Windows environment due to the reliance on Get-Event PowerShell queries.
+\item FreeEDR must deploy Syson on client workstations to capture the appropriate events for the system to perform properly.
+\item FreeEDR must satisfy all of Nick Ascoli’s, our external stakeholder for this project, UI preferences when system ownership is transferred to Security Risk Advisors.
+
+\end{enumerate}
+
+\begin{thebibliography}{9}
+
+\bibitem{TALR}
+  Beyond Feeds: A Deep Dive Into Threat Intelligence Sources,
+  \textit{Recorded Future},
+  https://www.recordedfuture.com/threat-intelligence-sources/,
+  2019.
+
+\bibitem{TALR}
+  Threat Alert Logic Repository,
+  \textit{Security Risk Advisors},
+  https://github.com/SecurityRiskAdvisors/TALR,
+  2019.
+
+\end{thebibliography}
+
+
+\end{document}
