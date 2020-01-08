@@ -13,6 +13,7 @@ namespace FreeEDR.Internal.DataService
     {
 
         [OperationContract]
+        [WebInvoke(Method = "GET", UriTemplate = "/GetData/?value={value}", BodyStyle = WebMessageBodyStyle.Wrapped, RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         string GetData(int value);
 
     }
