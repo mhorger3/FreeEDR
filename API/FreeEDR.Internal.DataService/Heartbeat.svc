@@ -1,0 +1,1 @@
+﻿<%@ ServiceHost Language="C#" Debug="true" Service="FreeEDR.Internal.DataService.Heartbeat" CodeBehind="Heartbeat.svc.cs" %>
