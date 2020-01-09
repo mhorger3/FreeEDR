@@ -16,6 +16,7 @@ namespace FreeEDR.Internal.DataService
         [WebInvoke(Method = "GET", UriTemplate = "/GetData/?value={value}", BodyStyle = WebMessageBodyStyle.Wrapped, RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         string GetData(int value);
 
+        // email address for microsoft planner - freeedr@drexel0.onmicrosoft.com
     }
 
 }

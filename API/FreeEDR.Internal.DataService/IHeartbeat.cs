@@ -13,9 +13,45 @@ namespace FreeEDR.Internal.DataService
     {
 
         [OperationContract]
-        [WebInvoke(Method = "GET", UriTemplate = "/GetData/?value={value}", BodyStyle = WebMessageBodyStyle.Wrapped, RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
-        string GetData(int value);
+        [WebInvoke(Method = "GET", UriTemplate = "/CheckAlive", BodyStyle = WebMessageBodyStyle.Wrapped, RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        HeartbeatStatus CheckAlive();
 
+        [OperationContract]
+        [WebInvoke(Method = "GET", UriTemplate = "/FetchData", BodyStyle = WebMessageBodyStyle.Wrapped, RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        bool FetchData();
+
+        [OperationContract]
+        [WebInvoke(Method = "GET", UriTemplate = "/Restart", BodyStyle = WebMessageBodyStyle.Wrapped, RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        void Restart();
+    }
+
+    [DataContract]
+    public class HeartbeatStatus
+    {
+        private bool statuscode;
+        private int servicesDown;
+        private string services;
+
+        [DataMember]
+        public bool HeartbeatStatusCode
+        {
+            get { return statuscode; }
+            set { statuscode = value; }
+        }
+
+        [DataMember]
+        public int HeartbeatDown
+        {
+            get { return servicesDown; }
+            set { servicesDown = value; }
+        }
+
+        [DataMember]
+        public string HeartbeatServices
+        {
+            get { return services; }
+            set { services = value; }
+        }
     }
 
 }
