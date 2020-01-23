@@ -1,0 +1,446 @@
+{
+	"info": {
+		"_postman_id": "edabab6c-ec6a-4c87-8477-757b1c97ea85",
+		"name": "FreeEDR",
+		"description": "This is a collection of all the Drexel FreeEDR Senior Project Internal API calls.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "MailService",
+			"item": [
+				{
+					"name": "SendMail",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"sender\": \"freeedr@outlook.com\" , \"recipient\": \"mh3294@drexel.edu\" , \"subject\": \"test\", \"body\": \"this is a test\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:56705/MailService.svc/SendMail",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "56705",
+							"path": [
+								"MailService.svc",
+								"SendMail"
+							]
+						},
+						"description": "This sends an message from the freeedr@outlook.com"
+					},
+					"response": []
+				},
+				{
+					"name": "SendMailAttach",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"sender\": \"freeedr@outlook.com\" , \"recipient\": \"mh3294@drexel.edu\" , \"subject\": \"test\", \"body\": \"this is a test\", \"attachment\": \"\\\\\\\\nasserver\\\\bgimbatch\\\\dev\\\\bin\\\\test.txt\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:56705/MailService.svc/SendMailAttach",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "56705",
+							"path": [
+								"MailService.svc",
+								"SendMailAttach"
+							]
+						},
+						"description": "This does the same as SendMail, but with a file."
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "ReportService",
+			"item": [
+				{
+					"name": "GetReportOptions",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:56705/ReportService.svc/GetReportOptions",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "56705",
+							"path": [
+								"ReportService.svc",
+								"GetReportOptions"
+							]
+						},
+						"description": "Gets all the reports that can be generated"
+					},
+					"response": []
+				},
+				{
+					"name": "GetHistoricalReports",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"dt\": \"\\/Date(10101010101)\\/\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:56705/ReportService.svc/GetHistoricalReports",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "56705",
+							"path": [
+								"ReportService.svc",
+								"GetHistoricalReports"
+							]
+						},
+						"description": "Gets all the reports that were generated historically for a date"
+					},
+					"response": []
+				},
+				{
+					"name": "GetReport",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"name\": \"Report\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:56705/ReportService.svc/GetHistoricalReports",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "56705",
+							"path": [
+								"ReportService.svc",
+								"GetHistoricalReports"
+							]
+						},
+						"description": "Generates a report given a name"
+					},
+					"response": []
+				},
+				{
+					"name": "GetReportDate",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"dt\": \"\\/Date(10101010101)\\/\", \"name\": \"Report\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:56705/ReportService.svc/GetReportDate",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "56705",
+							"path": [
+								"ReportService.svc",
+								"GetReportDate"
+							]
+						},
+						"description": "Generates a report given a name and date"
+					},
+					"response": []
+				},
+				{
+					"name": "GetReportFormat",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"name\": \"Report\", \"f\": \"PDF\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:56705/ReportService.svc/GetReportFormat",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "56705",
+							"path": [
+								"ReportService.svc",
+								"GetReportFormat"
+							]
+						},
+						"description": "Generates a report given a datetime"
+					},
+					"response": []
+				},
+				{
+					"name": "GetReportDateFormat",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"name\": \"Report\", \"f\": \"PDF\", \"dt\": \"\\/Date(10101010101)\\/\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:56705/ReportService.svc/GetReportDateFormat",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "56705",
+							"path": [
+								"ReportService.svc",
+								"GetReportDateFormat"
+							]
+						},
+						"description": "Generates a report in a given format and date time"
+					},
+					"response": []
+				},
+				{
+					"name": "GetReportRange",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"name\": \"Report\", \"start\": \"\\/Date(10101010101)\\/\", \"end\": \"\\/Date(10101010101)\\/\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:56705/ReportService.svc/GetReportRange",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "56705",
+							"path": [
+								"ReportService.svc",
+								"GetReportRange"
+							]
+						},
+						"description": "Generates a list of reports generated from a date range"
+					},
+					"response": []
+				},
+				{
+					"name": "ExportReport",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"r\": {\"Name\": \"Test\", \"Folder\": \"\\\\\\\\nasserver\\\\bgimbatch\\\\bin\", \"Filepath\": \"\\\\\\\\nasserver\\\\bgimbatch\\\\bin\\\\file.txt\", \"ReportDate\": \"\\/Date(102940201)\\/\", \"Format\": \"PDF\" }, \"recipient\": \"mh3294@drexel.edu\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:56705/ReportService.svc/ExportRange",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "56705",
+							"path": [
+								"ReportService.svc",
+								"ExportRange"
+							]
+						},
+						"description": "Exports a report via email"
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "HeartbeatService",
+			"item": [
+				{
+					"name": "CheckAlive",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:56705/HeartbeatService.svc/CheckAlive",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "56705",
+							"path": [
+								"HeartbeatService.svc",
+								"CheckAlive"
+							]
+						},
+						"description": "Checks if the endpoints are up"
+					},
+					"response": []
+				},
+				{
+					"name": "FetchData",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:56705/HeartbeatService.svc/FetchData",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "56705",
+							"path": [
+								"HeartbeatService.svc",
+								"FetchData"
+							]
+						},
+						"description": "Sees if there are new files after the endpoint is called"
+					},
+					"response": []
+				},
+				{
+					"name": "Restart",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:56705/HeartbeatService.svc/Restart",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "56705",
+							"path": [
+								"HeartbeatService.svc",
+								"Restart"
+							]
+						},
+						"description": "Restarts all internal services and IIS pool"
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		}
+	],
+	"protocolProfileBehavior": {}
+}
