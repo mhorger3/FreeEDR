@@ -10,10 +10,44 @@ namespace FreeEDR.Internal.DataService
 {
     public class Reporting : IReporting
     {
-        public string GetData(int value)
+        public void ExportReport(Report r, string recipient)
         {
-            return string.Format("You entered: {0}", value);
+            throw new NotImplementedException();
         }
 
+        public List<Report> GetHistoricalReports(DateTime dt)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Report GetReport(string name)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Report GetReportDate(string name, DateTime dt)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Report GetReportDateFormat(string name, DateTime dt, FormatOption f)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Report GetReportFormat(string name, FormatOption f)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<Report> GetReportOptions()
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<string> GetReportRange(string name, DateTime start, DateTime end)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
