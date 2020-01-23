@@ -12,11 +12,14 @@ namespace FreeEDR.Internal.DataService
     public interface IMailService
     {
 
-        [OperationContract]
-        [WebInvoke(Method = "GET", UriTemplate = "/GetData/?value={value}", BodyStyle = WebMessageBodyStyle.Wrapped, RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
-        string GetData(int value);
-
         // email address for microsoft planner - freeedr@drexel0.onmicrosoft.com
+        [OperationContract]
+        [WebInvoke(Method = "POST", BodyStyle = WebMessageBodyStyle.Wrapped, RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        void SendMail(string sender, string recipient, string subject, string body);
+
+        [OperationContract]
+        [WebInvoke(Method = "POST", BodyStyle = WebMessageBodyStyle.Wrapped, RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        void SendMailAttach(string sender, string recipient, string subject, string body, string attachment);
     }
 
 }
