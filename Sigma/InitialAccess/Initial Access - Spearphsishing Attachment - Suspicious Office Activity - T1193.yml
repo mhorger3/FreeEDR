@@ -1,0 +1,34 @@
+title: Initial Access - Spearphsishing Attachment - Suspicious Office Activity - T1193
+id: 
+status: experimental
+description: Detects processes suspiciously launched by Microsoft Office applications
+author: Bryan Bolesta
+date: 2020/01/12
+modified: 2020/01/12
+references:
+    - https://attack.mitre.org/techniques/T1193/
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    selection:
+        ParentImage:
+            - '*\winword.exe'
+            - '*\powerpnt.exe'
+            - '*\excel.exe'
+        Image:
+            - '*\powershell.exe'
+            - '*\cmd.exe'
+            - '*\cscript.exe'
+            - '*\wscript.exe'
+            - '*\mshta.exe'
+            - '*\wmic.exe'
+            - '*\svchost.exe'
+            - '*\msiexec.exe'
+    condition: selection
+falsepositives:
+    - Unknown
+level: high
+tags:
+    - attack.initial_access
+    - attack.t1193
