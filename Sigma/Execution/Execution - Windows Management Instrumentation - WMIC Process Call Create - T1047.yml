@@ -1,0 +1,27 @@
+title: Execution - Windows Management Instrumentation - WMIC Process Call Create - T1047
+id: 
+status: experimental
+description: Detects remote execution on hosts using WMIC Process Call Create
+author: Bryan Bolesta
+date: 2020/01/12
+modified: 2020/01/12
+references:
+    - https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1047/T1047.md
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    selection:
+        Image:
+            - '*\wmic.exe'
+        CommandLine:
+            - '*Process*'
+            - '*Call*'
+            - '*Create*'
+    condition: selection
+falsepositives:
+    - Unknown
+level: high
+tags:
+    - attack.execution
+    - attack.t1047
