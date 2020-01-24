@@ -1,0 +1,28 @@
+title: Discovery - System Information Discovery - Systeminfo - T1082
+id: 
+status: experimental
+description: Detects enumeration of system information using the Systeminfo utility or the VER and DIR commands
+author: Bryan Bolesta
+date: 2020/01/18
+modified: 2020/01/18
+references:
+    - https://attack.mitre.org/techniques/T1082/
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    selection:
+        ParentImage:
+            - '*\cmd.exe'
+            - '*\powershell.exe'
+        CommandLine:
+            - '*ver*'
+            - '*dir*'
+            - '*systeminfo*'
+    condition: selection
+falsepositives: 
+    - Unknown
+level: high
+tags:
+    - attack.discovery
+    - attack.t1082
