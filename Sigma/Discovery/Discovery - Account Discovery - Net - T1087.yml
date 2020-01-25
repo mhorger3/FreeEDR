@@ -1,0 +1,30 @@
+title: Discovery - Account Discovery - Net - T1087
+id: 
+status: experimental
+description: Detects enumeration of account information via net.exe
+author: Bryan Bolesta
+date: 2020/01/12
+modified: 2020/01/12
+references:
+    - https://attack.mitre.org/techniques/T1087/
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    selection:
+        Image:
+            - '*\net.exe'
+        CommandLine:
+            - '*user*'
+            - '*group*'
+            - '*localgroup*'
+            - '*accounts*'
+            - '*view*'
+            - '*share*'
+    condition: selection
+falsepositives: 
+    - Unknown
+level: high
+tags:
+    - attack.discovery
+    - attack.t1087

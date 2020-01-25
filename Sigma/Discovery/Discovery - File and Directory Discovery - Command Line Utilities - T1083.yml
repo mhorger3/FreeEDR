@@ -1,0 +1,30 @@
+title: Discovery - File and Directory Discovery - Command Line Utilities - T1083
+id: 
+status: experimental
+description: Detects enumeration of files and directories using various command-line utilities
+author: Bryan Bolesta
+date: 2020/01/12
+modified: 2020/01/12
+references:
+    - https://attack.mitre.org/techniques/T1083/
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    selection:
+        ParentImage:
+            - '*\cmd.exe'
+            - '*\powershell.exe'
+        CommandLine:
+            - '*dir*'
+            - '*tree*'
+            - '*ls*'
+            - '*systeminfo*'
+            - '*ver*'
+    condition: selection
+falsepositives: 
+    - Unknown
+level: high
+tags:
+    - attack.discovery
+    - attack.t1083

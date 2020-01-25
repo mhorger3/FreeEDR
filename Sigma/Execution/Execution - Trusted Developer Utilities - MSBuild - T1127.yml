@@ -1,0 +1,27 @@
+title: Execution - Trusted Developer Utilities - MSBuild - T1127
+id: 
+status: experimental
+description: Detects proxy execution of code using signed Microsoft binariy, Msbuild.exe
+author: Bryan Bolesta
+date: 2020/01/18
+modified: 2020/01/18
+references:
+    - https://attack.mitre.org/techniques/T1127/
+    - https://lolbas-project.github.io/lolbas/Binaries/Msbuild/
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    selection:
+        Image:
+            - '*\Msbuild.exe'
+        CommandLine:
+            - '*.csproj*'
+            - '*.xml*'
+    condition: selection
+falsepositives:
+    - Unknown
+level: high
+tags:
+    - attack.execution
+    - attack.t1127

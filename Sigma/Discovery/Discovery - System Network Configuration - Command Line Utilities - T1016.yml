@@ -1,0 +1,27 @@
+title: Discovery - System Network Configuration - Command Line Utilities - T1016
+id: 
+status: experimental
+description: Detects enumeratation of System Network Configurations using various command-line utilities
+author: Bryan Bolesta
+date: 2020/01/12
+modified: 2020/01/12
+references:
+    - https://attack.mitre.org/techniques/T1016/
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    selection:
+        Image:
+            - '*\ipconfig.exe'
+            - '*\ifconfig.exe'
+            - '*\nbtstat.exe'
+            - '*\route.exe'
+            - '*\arp.exe'
+    condition: selection
+falsepositives: 
+    - Unknown
+level: high
+tags:
+    - attack.discovery
+    - attack.t1016

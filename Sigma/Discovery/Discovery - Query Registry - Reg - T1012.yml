@@ -1,0 +1,29 @@
+title: Discovery - Query Registry - Reg Query - T1012
+id: 
+status: experimental
+description: Detects enumeration of Windows Registry using the Reg command
+author: Bryan Bolesta
+date: 2020/01/18
+modified: 2020/01/18
+references:
+    - https://attack.mitre.org/techniques/T1012/
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    selection:
+        Image:
+            - '*\reg.exe'
+        CommandLine:
+            - '*copy*'
+            - '*export*'
+            - '*query*'
+            - '*compare*'
+            - '*save*'
+    condition: selection
+falsepositives: 
+    - Unknown
+level: high
+tags:
+    - attack.discovery
+    - attack.t1012
