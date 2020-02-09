@@ -1,0 +1,37 @@
+Process and Network Forensic Scanners
+	- VirusTotal
+		○ Can scan remote files by entering download link to malware
+		○ Can scan URLs, IP addresses, File hashes
+		○ 32MB file size cap
+	- MetaDefender Cloud
+		○ Can upload File, URL, IP address, Domain, Hash, or CVE
+		○ 50MB file size cap
+		○ Can't scan remote files
+		○ Similar amount of anti--virus engine compared to VirusTotal
+	- Hybrid Analysis
+		○ Can upload File/URL (max size 100MB)
+		○ Can upload file collections
+		○ Can search by IOCs such as IP, Domain, and Hash
+    ○ Can search for matching sample by uploading HEX patterns and ASCII strings
+    
+PowerShell Script for pulling data from VirusTotal
+https://community.cisco.com/t5/security-blogs/powershell-using-virustotal-api-to-find-unknown-file-reputation/ba-p/3410001
+  - This is a PowerShell script that can retrieve VirusTotal report information
+  - Can search by file hash and file path
+  - Requires use of Public VirusTotal API Key, which is free
+
+PowerShell Script for querying VirusTotal
+https://gallery.technet.microsoft.com/Get-VirusTotalReport-90065fad
+  - Similar to the first link, this script dumps information from VirusTotal reports
+  - Can input file names and hashes
+  - Also requires Public VirusTotal API Key
+
+PowerShell Script for pulling data from Hybrid Analysis
+https://github.com/karemfaisal/Hybrid-Analysis-API
+  - This is a GitHub project that created a PowerShell script that can pull data from Hybrid Analysis
+  - Can search by file hash and file name
+  - Outputs information such as hashes, domains, relevant MITRE tactics
+
+Article on how to interact directly with VirusTotal Web API via PowerShell
+https://p0w3rsh3ll.wordpress.com/2013/01/17/searching-virustotal-com-with-powershell/
+  - This artcile discuess creating a PS script to actually interact with the web interface of VirusTotal
