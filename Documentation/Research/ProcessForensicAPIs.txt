@@ -1,19 +1,22 @@
-Process and Network Forensic Scanners
-- VirusTotal
-	○ Can scan remote files by entering download link to malware
-	○ Can scan URLs, IP addresses, File hashes
-	○ 32MB file size cap
-- MetaDefender Cloud
-	○ Can upload File, URL, IP address, Domain, Hash, or CVE
-	○ 50MB file size cap
-	○ Can't scan remote files
-	○ Similar amount of anti--virus engine compared to VirusTotal
-- Hybrid Analysis
-	○ Can upload File/URL (max size 100MB)
-	○ Can upload file collections
-	○ Can search by IOCs such as IP, Domain, and Hash
-	○ Can search for matching sample by uploading HEX patterns and ASCII strings
-    
+﻿Process and Network Forensic Scanners
+	- VirusTotal
+		○ Can scan remote files by entering download link to malware
+		○ Can scan URLs, IP addresses, File hashes
+		○ 32MB file size cap
+	- MetaDefender Cloud
+		○ Can upload File, URL, IP address, Domain, Hash, or CVE
+		○ 50MB file size cap
+		○ Can't scan remote files
+		○ Similar amount of anti--virus engine compared to VirusTotal
+	- Hybrid Analysis
+		○ Can upload File/URL (max size 100MB)
+		○ Can upload file collections
+		○ Can search by IOCs such as IP, Domain, and Hash
+   	        ○ Can search for matching sample by uploading HEX patterns and ASCII strings
+	- AlienVault (https://github.com/AlienVault-OTX/OTX-Apps-TAXII / https://otx.alienvault.com/api)
+		- Can hook directly into TAXII for further extensibility
+	- Certly API (https://english.api.rakuten.net/zakutynsky/api/Certly)
+		- Going to be mostly URL analytics    
 PowerShell Script for pulling data from VirusTotal
 https://community.cisco.com/t5/security-blogs/powershell-using-virustotal-api-to-find-unknown-file-reputation/ba-p/3410001
   - This is a PowerShell script that can retrieve VirusTotal report information

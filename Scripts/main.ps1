@@ -12,27 +12,32 @@ function upgradePip {
 }
 
 # PyYAML is required to get the YAML package for the SigmaC script to run. 
-fucntion installRequirements {
+function installRequirements {
     pip install pyyaml
 }
 
 <# 
-    This portion of the sciprt creates a variable for the rules repository server and the destination folder for each endpoint.
-    The rules are then copied from the reposiotry server to the destination on the endpoint.
+    This portion of the script creates a variable for the rules repository server and the destination folder for each endpoint.
+    The rules are then copied from the repository server to the destination on the endpoint.
     The "-Recurse" copies all folders and files under the \rules folder
     The "-Force" will create the folder on the endpoint if it does not already exist
 #>
 $ruleRepository = "\\10.0.20.57\rules"
 $destinationFolder = "C:\Windows"
-Copy-Item $ruleRepository $destinationFolder -Recurse -Force
 
 try {python --version}
 catch {installPython}
 upgradePip
 
 <#
-    This is where we will pull the the Sigma script from the rules reposiotry.
+    Compare using overall file length between the rules repo and the local rules directory. This will run periodically.
 #>
+function updateRules {
+    $LocalFolder = "C:\Windows\rules"
+    Compare-Object $LocalFolder $ruleRepository -Property Name, Length  | Where-Object {$_.SideIndicator -eq "<="} | ForEach-Object {
+        Copy-Item "\\10.0.20.57\rules\$($_.name)" -Destination $LocalFolder -Force
+    }
+}
 
 # Change to sigma directory and translate the rules.
 cd C:\Windows\sigma\tools
@@ -45,4 +50,5 @@ cd C:\Windows\sigma\tools
 $rules = python sigmac -t powershell -r C:\Windows\rules\Discovery
 $rules | ForEach-Object {$i = 1}{
     $_ | Out-File C:\Windows\sigmaTranslation\rule$i.txt
-    $i++}
+    $i++
+}

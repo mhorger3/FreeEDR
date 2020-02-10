@@ -67,6 +67,15 @@ npm run start - starts the project in webpack dev server on localhost:3333
 * React UI
 
 #### Infra
+
+The FreeEDR project requires a minimal environment to run. If resources are lacking, the central repository and dashboard can be configured to run on one host. This is not recommended, however.
+
+NOTE: Minimum windows server version should be 2012r2, but recommended is 2016. FreeEDR can run on anything with a PowerShell version greater than 2.
+Recommended infrastructure would include:
+- 1x File server (central rules repository)
+- 1x IIS server (dashboard server)
+- Any number of endpoint machines with Sysmon configured. Configuration file for Sysmon can be anything, but should be tested in your environment before a full deployment. A test/example config file can be found here: https://github.com/SwiftOnSecurity/sysmon-config
+
 ---
 ### 4. Where can users get help with the project?
 ---
