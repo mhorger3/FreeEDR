@@ -5,6 +5,11 @@ import MUIDataTable from 'mui-datatables';
 import { Tabs, Tab, AppBar, MuiThemeProvider, createMuiTheme, BottomNavigation } from '@material-ui/core';
 import { Toolbar, Typography, MenuItem, Select, FormControl, InputLabel, Input  } from '@material-ui/core';
 import {List, Divider, ListItem, ListItemText, Drawer, Button} from '@material-ui/core';
+import {Admin} from './Admin.js';
+import {Audit} from './Audit.js';
+import {Reports} from './Reports.js';
+import {Support} from './Support.js';
+import {AppDashboardMaintenance} from '../src/AppDashboard.Main-1.0.0.0.js';
 
 export class BgDashboard extends Component {
 	constructor(props){
@@ -51,17 +56,29 @@ export class BgDashboard extends Component {
 
 	renderSite(text){
             // need to handle routing here
-            alert(text);
+            switch (text) {
+                case "Home":
+                    ReactDOM.render(<AppDashboardMaintenance/>, document.getElementById('main'));
+                    break;
+                case "Reports":
+                    ReactDOM.render(<Reports/>, document.getElementById('main'));
+                    break;
+                case "Audit":
+                    ReactDOM.render(<Audit/>, document.getElementById('main'));
+                    break;
+                case "Request Support":
+                    ReactDOM.render(<Support/>, document.getElementById('main'));
+                    break;
+                case "Admin":
+                    ReactDOM.render(<Admin/>, document.getElementById('main'));
+                    break;
+                default:
+
+
+            }
+                
     }
     
-    // Function that will open up our URL in a new tab
-    callSite(url){
-        console.log(url);
-        alert(url);
-        var win = window.open(url, '_blank');
-        win.focus();
-    }
-
 	render(){
         const { value, isLoaded, applications } = this.state;
         const { subMenu } = this.state;
