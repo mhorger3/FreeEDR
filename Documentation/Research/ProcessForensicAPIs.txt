@@ -1,18 +1,18 @@
 Process and Network Forensic Scanners
-	- VirusTotal
-		○ Can scan remote files by entering download link to malware
-		○ Can scan URLs, IP addresses, File hashes
-		○ 32MB file size cap
-	- MetaDefender Cloud
-		○ Can upload File, URL, IP address, Domain, Hash, or CVE
-		○ 50MB file size cap
-		○ Can't scan remote files
-		○ Similar amount of anti--virus engine compared to VirusTotal
-	- Hybrid Analysis
-		○ Can upload File/URL (max size 100MB)
-		○ Can upload file collections
-		○ Can search by IOCs such as IP, Domain, and Hash
-    ○ Can search for matching sample by uploading HEX patterns and ASCII strings
+- VirusTotal
+	○ Can scan remote files by entering download link to malware
+	○ Can scan URLs, IP addresses, File hashes
+	○ 32MB file size cap
+- MetaDefender Cloud
+	○ Can upload File, URL, IP address, Domain, Hash, or CVE
+	○ 50MB file size cap
+	○ Can't scan remote files
+	○ Similar amount of anti--virus engine compared to VirusTotal
+- Hybrid Analysis
+	○ Can upload File/URL (max size 100MB)
+	○ Can upload file collections
+	○ Can search by IOCs such as IP, Domain, and Hash
+	○ Can search for matching sample by uploading HEX patterns and ASCII strings
     
 PowerShell Script for pulling data from VirusTotal
 https://community.cisco.com/t5/security-blogs/powershell-using-virustotal-api-to-find-unknown-file-reputation/ba-p/3410001
@@ -35,3 +35,11 @@ https://github.com/karemfaisal/Hybrid-Analysis-API
 Article on how to interact directly with VirusTotal Web API via PowerShell
 https://p0w3rsh3ll.wordpress.com/2013/01/17/searching-virustotal-com-with-powershell/
   - This artcile discuess creating a PS script to actually interact with the web interface of VirusTotal
+
+PowerShell Script for pulling data from VirusTotal (search by file info AND network info)
+https://archive.codeplex.com/?p=psvirustotal
+  - Main difference this script provides is in terms of accepted input
+  - You can get VirusTotal reports based on IP Address, Domain, and URL in addition to File Hash and Name
+  - This script can be used to accomplish both proccess forensics AND network forensics
+  - Listed under the official VirusTotal API Scripts page (https://support.virustotal.com/hc/en-us/articles/115002146469-API-Scripts)
+  
