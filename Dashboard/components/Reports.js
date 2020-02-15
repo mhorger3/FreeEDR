@@ -26,9 +26,11 @@ export class Reports extends Component {
 				<h3> FreeEDR Senior Design Reports Page </h3>
 				<AppBar position="static">
 				<Tabs value={value} onChange={this.handleChange} aria-label="simple tabs example">
-					<Tab label="Item One"/>
-					<Tab label="Item Two"/>
-					<Tab label="Item Three"/>
+					<Tab label="Reporting Home"/>
+					<Tab label="Daily Event Report"/>
+					<Tab label="Rule Deployment Report"/>
+					<Tab label="Logging Reports"/>
+					<Tab label="View Previous Reports"/>
 				</Tabs>
 				</AppBar>
 				{value === 0 && <div id="content">a </div>}
