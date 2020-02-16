@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom';
 import axios from 'axios';
 import MUIDataTable from 'mui-datatables';
 import {AppBar, Tab, Tabs} from '@material-ui/core';
+import { createMuiTheme, MuiThemeProvider } from '@material-ui/core';
+import {FreeEDRIconButton} from '../components/FreeEDRIconButton.js';
 export class Audit extends Component {
     constructor(props){
 		super(props);
