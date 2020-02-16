@@ -78,6 +78,15 @@ Recommended infrastructure would include:
 
 ---
 ### 4. Where can users get help with the project?
+
+#### Dashboard
+
+For the dashboard, most of the components and their usage can be found here: https://material-ui.com/. Most of the components are abstracted out into their own file. MUIDatatables can be found here: https://github.com/gregnb/mui-datatables. One of the project members actually is a contributor to the library!
+
+#### API
+
+For the internal WCF API's, a good starting place for documentation on how the operations work can be found here: https://www.c-sharpcorner.com/UploadFile/0c1bb2/creating-wcf-rest-service/
+
 ---
 ### 5. Who maintains and contributes to the project?
 Currently, the project is being developed and maintained by a senior design project team, FreeEDR, of the College of Computing and Informatics of Drexel University. The seven team members include students from the College of Computing and Informatics and the College of Engineering. 
