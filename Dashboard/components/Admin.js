@@ -30,8 +30,8 @@ export class Admin extends Component {
 					<Tab label="View Rule Repository"/>
 				</Tabs>
 				</AppBar>
-				{value === 0 && <div id="content">a </div>}
-				{value === 1 && <div id="content">b  </div>}
+				{value === 0 && <div id="content"></div>}
+				{value === 1 && <div id="content"></div>}
 			</div>
 		)
 	}

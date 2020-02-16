@@ -33,9 +33,11 @@ export class Audit extends Component {
 					<Tab label="View Previous Audits"/>
 				</Tabs>
 				</AppBar>
-				{value === 0 && <div id="content">a </div>}
-				{value === 1 && <div id="content">b  </div>}
-				{value === 2 && <div id="content">c  </div>}
+				{value === 0 && <div id="content"></div>}
+				{value === 1 && <div id="content"></div>}
+				{value === 2 && <div id="content"></div>}
+				{value === 3 && <div id="content"></div>}
+				{value === 4 && <div id="content"></div>}
 			</div>
 		)
 	}

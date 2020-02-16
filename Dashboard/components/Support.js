@@ -26,16 +26,14 @@ export class Support extends Component {
 				<h3> FreeEDR Senior Design Support Page </h3>
 				<AppBar position="static">
 				<Tabs value={value} onChange={this.handleChange} aria-label="simple tabs example">
-					<Tab label="Reporting Home"/>
-					<Tab label="Daily Event Report"/>
-					<Tab label="Rule Deployment Report"/>
-					<Tab label="Logging Reports"/>
-					<Tab label="View Previous Reports"/>
+					<Tab label="Contact Incident Support"/>
+					<Tab label="Support Hotline"/>
+					<Tab label="Submit a Ticket"/>
 				</Tabs>
 				</AppBar>
-				{value === 0 && <div id="content">a </div>}
-				{value === 1 && <div id="content">b  </div>}
-				{value === 2 && <div id="content">c  </div>}
+				{value === 0 && <div id="content"></div>}
+				{value === 1 && <div id="content"></div>}
+				{value === 2 && <div id="content"></div>}
 			</div>
 		)
 	}
