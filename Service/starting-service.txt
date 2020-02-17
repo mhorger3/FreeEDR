@@ -1,0 +1,12 @@
+[Parameter(ParameterSetName='Start', Mandatory=$true)]
+[Switch]$Start, # Start the service
+
+if ($Start) {# Start the service
+  if ($isSystem) { # If running as SYSTEM, ie. invoked as a service
+    Start-Process PowerShell.exe -ArgumentList (
+      "-c & '$scriptFullName' -Service")
+  } else { # Invoked manually by the administrator
+  Start-Service $serviceName # Ask Service Control Manager to start it
+  }
+  return
+}

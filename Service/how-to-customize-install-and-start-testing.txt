@@ -1,0 +1,9 @@
+######### TO DO: Implement your own service code here. ##########
+###### Example that wakes up and logs a line every 10 sec: ######
+Start-Sleep 10
+Log "$script -Service # Awaken after 10s"
+
+C:\Temp\MyService.ps1 -Setup
+MyService.ps1 -Start
+type C:\Windows\Logs\MyService.log
+

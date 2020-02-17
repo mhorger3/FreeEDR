@@ -1,0 +1,15 @@
+PS C:\Temp> C:\SRC\PowerShell\SRC\PSService.ps1 -Status
+Not Installed
+PS C:\Temp> PSService.ps1 -Status
+PSService.ps1 : The term 'PSService.ps1' is not recognized as the name of a cmdlet, function, script file, or operable program.
+[...]
+PS C:\Temp> C:\SRC\PowerShell\SRC\PSService.ps1 -Setup
+PS C:\Temp> PSService.ps1 -Status
+Stopped
+PS C:\Temp> PSService.ps1 -Start
+PS C:\Temp>
+
+Calling PSService.ps1 -Status at this stage would produce this output: Running. And this, after waiting 30 seconds:
+PS C:\Temp> PSService.ps1 -Stop
+PS C:\Temp> PSService.ps1 -Remove
+PS C:\Temp>

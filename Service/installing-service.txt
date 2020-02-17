@@ -1,0 +1,26 @@
+[Parameter(ParameterSetName='Setup', Mandatory=$true)]
+[Switch]$Setup,    # Install the service
+
+if ($Setup) {
+  # Install the service
+  # Check if it's necessary (if not installed,
+  # or if this script is newer than the installed copy).
+  [...] # If necessary and already installed, uninstall the old copy.
+  # Copy the service script into the installation directory.
+  if ($ScriptFullName -ne $scriptCopy) {
+    Copy-Item $ScriptFullName $scriptCopy
+  }
+  # Generate the service .EXE from the C# source embedded in this script.
+  try {
+    Add-Type -TypeDefinition $source -Language CSharp -OutputAssembly $exeFullName
+      -OutputType ConsoleApplication -ReferencedAssemblies "System.ServiceProcess"
+  } catch {
+    $msg = $_.Exception.Message
+    Write-error "Failed to create the $exeFullName service stub. $msg"
+    exit 1
+  }
+  # Register the service
+  $pss = New-Service $serviceName $exeFullName -DisplayName $serviceDisplayName
+    -StartupType Automatic
+  return
+}

@@ -1,0 +1,2 @@
+use PS for prototyping, service script is fine but compiled code would do better so 
+ideally (probly SRA task) rewrite in C++ or C# 

@@ -1,0 +1,22 @@
+try {
+  $pss = Get-Service $serviceName -ea stop # Will error-out if not installed.
+} catch {
+  "Not Installed"
+  return
+}
+$pss.Status
+
+$spid = $null
+$processes = @(gwmi Win32_Process -filter "Name = 'powershell.exe'" | where {
+  $_.CommandLine -match ".*$scriptCopyCname.*-Service"
+})
+foreach ($process in $processes) { # Normally there is only one.
+  $spid = $process.ProcessId
+  Write-Verbose "$serviceName Process ID = $spid"
+}
+if (($pss.Status -eq "Running") -and (!$spid)) {
+# This happened during the debugging phase.
+  Write-Error "The Service Control Manager thinks $serviceName is started,
+    but $serviceName.ps1 -Service is not running."
+  exit 1
+}

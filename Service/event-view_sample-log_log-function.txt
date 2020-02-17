@@ -1,0 +1,28 @@
+Get-Eventlog -LogName Application -Source PSService | select -First 10
+
+PS C:\Temp> type C:\Windows\Logs\PSService.log
+2016-01-02 15:29:47 JFLZB\Larvoire C:\SRC\PowerShell\SRC\PSService.ps1 -Status
+2016-01-02 15:30:38 JFLZB\Larvoire C:\SRC\PowerShell\SRC\PSService.ps1 -Setup
+2016-01-02 15:30:42 JFLZB\Larvoire PSService.ps1 -Status
+2016-01-02 15:31:13 JFLZB\Larvoire PSService.ps1 -Start
+2016-01-02 15:31:15 NT AUTHORITY\SYSTEM & 'C:\WINDOWS\System32\PSService.ps1' -Start
+2016-01-02 15:31:15 NT AUTHORITY\SYSTEM PSService.ps1 -Start: Starting script 'C:\WINDOWS\System32\PSService.ps1' -Service
+2016-01-02 15:31:15 NT AUTHORITY\SYSTEM & 'C:\WINDOWS\System32\PSService.ps1' -Service
+2016-01-02 15:31:15 NT AUTHORITY\SYSTEM PSService.ps1 -Service # Beginning background job
+2016-01-02 15:31:25 NT AUTHORITY\SYSTEM PSService -Service # Awaken after 10s
+2016-01-02 15:31:36 NT AUTHORITY\SYSTEM PSService -Service # Awaken after 10s
+2016-01-02 15:31:46 NT AUTHORITY\SYSTEM PSService -Service # Awaken after 10s
+2016-01-02 15:31:54 JFLZB\Larvoire PSService.ps1 -Stop
+2016-01-02 15:31:55 NT AUTHORITY\SYSTEM & 'C:\WINDOWS\System32\PSService.ps1' -Stop
+2016-01-02 15:31:55 NT AUTHORITY\SYSTEM PSService.ps1 -Stop: Stopping script PSService.ps1 -Service
+2016-01-02 15:31:55 NT AUTHORITY\SYSTEM Stopping PID 34164
+2016-01-02 15:32:01 JFLZB\Larvoire PSService.ps1 -Remove
+PS C:\Temp>
+
+Function Log ([String]$string) {
+  if (!(Test-Path $logDir)) {
+    mkdir $logDir
+  }
+  "$(Now) $userName $string" |
+    out-file -Encoding ASCII -append "$logDir\$serviceName.log"
+}
