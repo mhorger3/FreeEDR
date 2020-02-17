@@ -1,0 +1,3 @@
+Get-Command *service*
+Get-Command -module Microsoft.PowerShell.Management *service*
+sc.exe delete $serviceName

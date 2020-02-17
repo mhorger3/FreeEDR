@@ -1,0 +1,4 @@
+PS C:\Temp> .\hello.ps1
+PS C:\Temp> .\hello.exe
+Hello World!
+PS C:\Temp>
