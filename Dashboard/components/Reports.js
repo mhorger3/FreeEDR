@@ -2,9 +2,10 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import axios from 'axios';
 import MUIDataTable from 'mui-datatables';
-import {AppBar, Tab, Tabs} from '@material-ui/core';
+import {Select, Paper, InputLabel, MenuItem, Grid, Button, AppBar, Tab, Tabs, Radio, RadioGroup, FormHelperText, FormControlLabel, FormControl, FormLabel, TextField} from '@material-ui/core';
 import { createMuiTheme, MuiThemeProvider } from '@material-ui/core';
 import {FreeEDRIconButton} from '../components/FreeEDRIconButton.js';
+import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile';
 export class Reports extends Component {
     constructor(props){
 		super(props);
@@ -29,8 +30,8 @@ export class Reports extends Component {
 			downloadOptions: {
 				filename: 'RecentReports.csv', separator: ','
 			},
-			rowsPerPage: 7,
-		    rowsPerPageOptions: [5,7,9],
+			rowsPerPage: 3,
+		    rowsPerPageOptions: [3,5,8],
 		};
 		const chipTheme = createMuiTheme({
 			palette: {
@@ -56,6 +57,32 @@ export class Reports extends Component {
 			["User Application Log", "10-28-2019 10:12:00Z", "C:\\inetpub\\LogFiles\\wscvsm1\\userApp_10_28_19_10_12.log", "IncidentTeam", "C:\\inetpub\\LogFiles\\wscvsm1\\userApp_10_28_19_10_12.log"],
 			["Daily Event Log", "10-27-2019 10:12:00Z", "C:\\inetpub\\LogFiles\\wscvsm1\\dailyEvent_10_27_19_10_12.log", "IncidentTeam", "C:\\inetpub\\LogFiles\\wscvsm1\\dailyEvent_10_27_19_10_12.log"],
 		];
+
+		const eventData = [
+			["Daily Event Log", "11-3-2019 10:12:00Z", "C:\\inetpub\\LogFiles\\wscvsm1\\dailyEvent_11_3_19_10_12.log", "IncidentTeam", "C:\\inetpub\\LogFiles\\wscvsm1\\dailyEvent_11_3_19_10_12.log"],
+			["Daily Event Log", "11-1-2019 10:12:00Z", "C:\\inetpub\\LogFiles\\wscvsm1\\dailyEvent_11_1_19_10_12.log", "IncidentTeam", "C:\\inetpub\\LogFiles\\wscvsm1\\dailyEvent_11_1_19_10_12.log"],
+			["Daily Event Log", "11-1-2019 10:10:00Z", "C:\\inetpub\\LogFiles\\wscvsm1\\dailyEvent_11_1_19_10_10.log", "IncidentTeam", "C:\\inetpub\\LogFiles\\wscvsm1\\dailyEvent_11_1_19_10_10.log"],
+			["Daily Event Log", "10-28-2019 10:12:00Z", "C:\\inetpub\\LogFiles\\wscvsm1\\dailyEvent_10_28_19_10_12.log", "IncidentTeam", "C:\\inetpub\\LogFiles\\wscvsm1\\dailyEvent_10_28_19_10_12.log"],
+			["Daily Event Log", "10-27-2019 10:12:00Z", "C:\\inetpub\\LogFiles\\wscvsm1\\dailyEvent_10_27_19_10_12.log", "IncidentTeam", "C:\\inetpub\\LogFiles\\wscvsm1\\dailyEvent_10_27_19_10_12.log"],
+		];
+
+		const loggingData = [
+			["Daily IIS Log", "11-3-2019 10:10:00Z", "C:\\inetpub\\LogFiles\\wscvsm1\\dailyIIS_11_3_19_10_10.log", "IncidentTeam", "C:\\inetpub\\LogFiles\\wscvsm1\\dailyIIS_11_3_19_10_10.log"],
+			["User Application Log", "11-1-2019 10:12:00Z", "C:\\inetpub\\LogFiles\\wscvsm1\\userApp_11_1_19_10_12.log", "IncidentTeam", "C:\\inetpub\\LogFiles\\wscvsm1\\userApp_11_1_19_10_12.log"],
+			["Daily IIS Log", "10-29-2019 10:10:00Z", "C:\\inetpub\\LogFiles\\wscvsm1\\dailyIIS_10_29_19_10_10.log", "IncidentTeam", "C:\\inetpub\\LogFiles\\wscvsm1\\dailyIIS_10_29_19_10_10.log"],
+			["User Application Log", "10-29-2019 10:12:00Z", "C:\\inetpub\\LogFiles\\wscvsm1\\userApp_10_29_19_10_12.log", "IncidentTeam", "C:\\inetpub\\LogFiles\\wscvsm1\\userApp_10_29_19_10_12.log"],
+			["Daily IIS Log", "10-28-2019 10:10:00Z", "C:\\inetpub\\LogFiles\\wscvsm1\\dailyIIS_10_28_19_10_10.log", "IncidentTeam", "C:\\inetpub\\LogFiles\\wscvsm1\\dailyIIS_10_28_19_10_10.log"],
+			["User Application Log", "10-28-2019 10:12:00Z", "C:\\inetpub\\LogFiles\\wscvsm1\\userApp_10_28_19_10_12.log", "IncidentTeam", "C:\\inetpub\\LogFiles\\wscvsm1\\userApp_10_28_19_10_12.log"],
+		];
+
+		const deploymentData = [
+		
+
+		];
+
+		const theme = {
+			spacing: 8,
+		};
 		const columns = [
 			{
 				name: "Report",
@@ -103,18 +130,153 @@ export class Reports extends Component {
 				<h3> FreeEDR Senior Design Reports Page </h3>
 				<AppBar position="static">
 				<Tabs value={value} onChange={this.handleChange} aria-label="simple tabs example">
-					<Tab label="Reporting Home"/>
 					<Tab label="Daily Event Report"/>
 					<Tab label="Rule Deployment Report"/>
 					<Tab label="Logging Reports"/>
 					<Tab label="View Previous Reports"/>
 				</Tabs>
 				</AppBar>
-				{value === 0 && <div id="content"></div>}
-				{value === 1 && <div id="content"></div>}
-				{value === 2 && <div id="content"></div>}
-				{value === 3 && <div id="content"></div>}
-				{value === 4 && <div id="content">
+				{value === 0 && <div id="content">
+				<br></br>
+				<MUIDataTable title={"Recent Event Reports"} data={eventData} columns={columns} options={options}/>
+				<br></br>
+				<h3>Generate Reports</h3>
+				<Grid container spacing={24}>
+					<Grid item xs={6} sm={6}>
+					<Paper>
+						<Button variant="contained" color="default">
+							<InsertDriveFileIcon/>	Report 1
+						</Button>
+						<br></br> <br></br>
+						<Button variant="contained"	color="default">
+						<InsertDriveFileIcon/>	Report 2
+						</Button>
+						<br></br> <br></br>
+						<Button variant="contained"	color="default">
+						<InsertDriveFileIcon/>	Report 3
+						</Button>
+						<br></br> <br></br>
+						<Button variant="contained"	color="default">
+						<InsertDriveFileIcon/>	Report 4
+						</Button>
+					</Paper>
+					</Grid>
+					<Grid item xs={6} sm={6}>
+					<Paper>
+						<Button variant="contained"	color="default">
+							<InsertDriveFileIcon/>	Report 5
+						</Button>
+						<br></br> <br></br>
+						<Button variant="contained"	color="default">
+						<InsertDriveFileIcon/>	Report 6
+						</Button>
+						<br></br> <br></br>
+						<Button variant="contained"	color="default">
+						<InsertDriveFileIcon/>	Report 7
+						</Button>
+						<br></br> <br></br>
+						<Button variant="contained"	color="default">
+						<InsertDriveFileIcon/>	Report 8
+						</Button>
+					</Paper>
+					</Grid>
+				</Grid>						
+				</div>}
+				{value === 1 && <div id="content">
+				<br></br>
+				<MUIDataTable title={"Recent Deployment Reports"} data={deploymentData} columns={columns} options={options}/>
+				<br></br>
+				<h3>Generate Reports</h3>
+				<Grid container spacing={24}>
+					<Grid item xs={6} sm={6}>
+					<Paper>
+						<Button variant="contained" color="default">
+							<InsertDriveFileIcon/>	Report 1
+						</Button>
+						<br></br> <br></br>
+						<Button variant="contained"	color="default">
+						<InsertDriveFileIcon/>	Report 2
+						</Button>
+						<br></br> <br></br>
+						<Button variant="contained"	color="default">
+						<InsertDriveFileIcon/>	Report 3
+						</Button>
+						<br></br> <br></br>
+						<Button variant="contained"	color="default">
+						<InsertDriveFileIcon/>	Report 4
+						</Button>
+					</Paper>
+					</Grid>
+					<Grid item xs={6} sm={6}>
+					<Paper>
+						<Button variant="contained"	color="default">
+							<InsertDriveFileIcon/>	Report 5
+						</Button>
+						<br></br> <br></br>
+						<Button variant="contained"	color="default">
+						<InsertDriveFileIcon/>	Report 6
+						</Button>
+						<br></br> <br></br>
+						<Button variant="contained"	color="default">
+						<InsertDriveFileIcon/>	Report 7
+						</Button>
+						<br></br> <br></br>
+						<Button variant="contained"	color="default">
+						<InsertDriveFileIcon/>	Report 8
+						</Button>
+					</Paper>
+					</Grid>
+				</Grid>	
+					
+					
+				</div>}
+				{value === 2 && <div id="content">
+				<br></br>
+				<MUIDataTable title={"Recent Logging Reports"} data={loggingData} columns={columns} options={options}/>
+				<br></br>
+				<h3>Generate Reports</h3>
+				<Grid container spacing={24}>
+					<Grid item xs={6} sm={6}>
+					<Paper>
+						<Button variant="contained" color="default">
+							<InsertDriveFileIcon/>	Report 1
+						</Button>
+						<br></br> <br></br>
+						<Button variant="contained"	color="default">
+						<InsertDriveFileIcon/>	Report 2
+						</Button>
+						<br></br> <br></br>
+						<Button variant="contained"	color="default">
+						<InsertDriveFileIcon/>	Report 3
+						</Button>
+						<br></br> <br></br>
+						<Button variant="contained"	color="default">
+						<InsertDriveFileIcon/>	Report 4
+						</Button>
+					</Paper>
+					</Grid>
+					<Grid item xs={6} sm={6}>
+					<Paper>
+						<Button variant="contained"	color="default">
+							<InsertDriveFileIcon/>	Report 5
+						</Button>
+						<br></br> <br></br>
+						<Button variant="contained"	color="default">
+						<InsertDriveFileIcon/>	Report 6
+						</Button>
+						<br></br> <br></br>
+						<Button variant="contained"	color="default">
+						<InsertDriveFileIcon/>	Report 7
+						</Button>
+						<br></br> <br></br>
+						<Button variant="contained"	color="default">
+						<InsertDriveFileIcon/>	Report 8
+						</Button>
+					</Paper>
+					</Grid>
+				</Grid>		
+				</div>}
+				{value === 3 && <div id="content">
 				<h4> Below is the list of reports that were recently generated by the system users.</h4>
 				<h4> In order to download the reports, please double click on the intended icon in the row of the report.</h4>
 				<MUIDataTable title={"Recent Reports"} data={data} columns={columns} options={options}/></div>}
