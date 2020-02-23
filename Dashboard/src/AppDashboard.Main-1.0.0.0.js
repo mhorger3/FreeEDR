@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import axios from 'axios';
 import MUIDataTable from 'mui-datatables';
-import { IconButton, Icon, createMuiTheme, MuiThemeProvider } from '@material-ui/core';
+import { createMuiTheme, MuiThemeProvider } from '@material-ui/core';
 import {FreeEDRIconButton} from '../components/FreeEDRIconButton.js';
 
 export class AppDashboardMaintenance extends Component {
