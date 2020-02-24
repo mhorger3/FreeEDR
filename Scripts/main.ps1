@@ -174,3 +174,170 @@ function Get-VirusTotalReport {
 }
 #sample usage of the functions in this section
 #Get-VirusTotalReport -VTApiKey $vtApi -FilePath C:\Users\Public\virustotal.ps1
+
+<#
+	This next section is solely for adapted VirusTotal Code. This is a Virus Total Powershell Module by David B Heise
+	This code is entirely adapted from: https://archive.codeplex.com/?p=psvirustotal
+	This code will retrieve VirusTotal reports for files, hashes, IPs, URLs, and domains
+	This code will not upload the file, but will get the SHA-256 File Hash and use the hash to retrieve the VT report
+#>
+function Get-VTReport {
+    [CmdletBinding()]
+    Param( 
+    [String] $VTApiKey = "276baa96547e2a405c3751eeb24a33b0bc63a3b965e9cbe6d2c8ddefba54168f", #Hardcoded API Key Value
+    [Parameter(ParameterSetName="hash", ValueFromPipeline=$true,ValueFromPipelineByPropertyName=$true)][String] $hash,
+    [Parameter(ParameterSetName="file", ValueFromPipeline=$true,ValueFromPipelineByPropertyName=$true)][System.IO.FileInfo] $file,
+    [Parameter(ParameterSetName="uri", ValueFromPipeline=$true,ValueFromPipelineByPropertyName=$true)][Uri] $uri,
+    [Parameter(ParameterSetName="ipaddress", ValueFromPipeline=$true,ValueFromPipelineByPropertyName=$true)][String] $ip,
+    [Parameter(ParameterSetName="domain", ValueFromPipeline=$true,ValueFromPipelineByPropertyName=$true)][String] $domain
+    )
+    Begin {
+        $fileUri = 'https://www.virustotal.com/vtapi/v2/file/report'
+        $UriUri = 'https://www.virustotal.com/vtapi/v2/url/report'
+        $IPUri = 'http://www.virustotal.com/vtapi/v2/ip-address/report'
+        $DomainUri = 'http://www.virustotal.com/vtapi/v2/domain/report'
+       
+        function Get-Hash(
+            [System.IO.FileInfo] $file = $(Throw 'Usage: Get-Hash [System.IO.FileInfo]'), 
+            [String] $hashType = 'sha256')
+        {
+          $stream = $null;  
+          [string] $result = $null;
+          $hashAlgorithm = [System.Security.Cryptography.HashAlgorithm]::Create($hashType )
+          $stream = $file.OpenRead();
+          $hashByteArray = $hashAlgorithm.ComputeHash($stream);
+          $stream.Close();
+
+          trap
+          {
+            if ($stream -ne $null) { $stream.Close(); }
+            break;
+          }
+
+          # Convert the hash to Hex
+          $hashByteArray | foreach { $result += $_.ToString("X2") }
+          return $result
+        }
+    }
+    Process {
+        [String] $h = $null
+        [String] $u = $null
+        [String] $method = $null
+        $body = @{}
+
+        switch ($PSCmdlet.ParameterSetName) {
+        "file" { 
+            $h = Get-Hash -file $file
+            Write-Verbose -Message ("FileHash:" + $h)
+            $u = $fileUri
+            $method = 'POST'
+            $body = @{ resource = $h; apikey = $VTApiKey}
+            }
+        "hash" {            
+            $u = $fileUri
+            $method = 'POST'
+            $body = @{ resource = $hash; apikey = $VTApiKey}
+            }
+        "uri" {
+            $u = $UriUri
+            $method = 'POST'
+            $body = @{ resource = $uri; apikey = $VTApiKey}
+            }
+        "ipaddress" {
+            $u = $IPUri
+            $method = 'GET'
+            $body = @{ ip = $ip; apikey = $VTApiKey}
+        }
+        "domain" {            
+            $u = $DomainUri
+            $method = 'GET'
+            $body = @{ domain = $domain; apikey = $VTApiKey}}
+        }        
+
+        return Invoke-RestMethod -Method $method -Uri $u -Body $body
+    }    
+}
+
+function Invoke-VTScan {
+    [CmdletBinding()]
+    Param( 
+    [String] $VTApiKey = "276baa96547e2a405c3751eeb24a33b0bc63a3b965e9cbe6d2c8ddefba54168f", #Hardcoded API Key Value
+    [Parameter(ParameterSetName="file", ValueFromPipeline=$true,ValueFromPipelineByPropertyName=$true)]
+        [System.IO.FileInfo] $file,
+    [Parameter(ParameterSetName="uri", ValueFromPipeline=$true,ValueFromPipelineByPropertyName=$true)]
+        [Uri] $uri
+    )
+    Begin {
+        $fileUri = 'https://www.virustotal.com/vtapi/v2/file/scan'
+        $UriUri = 'https://www.virustotal.com/vtapi/v2/url/scan'
+        [byte[]]$CRLF = 13, 10
+
+        function Get-AsciiBytes([String] $str) {
+            return [System.Text.Encoding]::ASCII.GetBytes($str)            
+        }
+    }
+    Process {
+        [String] $h = $null
+        [String] $u = $null
+        [String] $method = $null
+        $body = New-Object System.IO.MemoryStream
+
+        switch ($PSCmdlet.ParameterSetName) {
+        "file" { 
+            $u = $fileUri
+            $method = 'POST'
+            $boundary = [Guid]::NewGuid().ToString().Replace('-','')
+            $ContentType = 'multipart/form-data; boundary=' + $boundary
+            $b2 = Get-AsciiBytes ('--' + $boundary)
+            $body.Write($b2, 0, $b2.Length)
+            $body.Write($CRLF, 0, $CRLF.Length)
+            
+            $b = (Get-AsciiBytes ('Content-Disposition: form-data; name="apikey"'))
+            $body.Write($b, 0, $b.Length)
+
+            $body.Write($CRLF, 0, $CRLF.Length)
+            $body.Write($CRLF, 0, $CRLF.Length)
+            
+            $b = (Get-AsciiBytes $VTApiKey)
+            $body.Write($b, 0, $b.Length)
+
+            $body.Write($CRLF, 0, $CRLF.Length)
+            $body.Write($b2, 0, $b2.Length)
+            $body.Write($CRLF, 0, $CRLF.Length)
+            
+            $b = (Get-AsciiBytes ('Content-Disposition: form-data; name="file"; filename="' + $file.Name + '";'))
+            $body.Write($b, 0, $b.Length)
+            $body.Write($CRLF, 0, $CRLF.Length)            
+            $b = (GgetAsciiBytes 'Content-Type:application/octet-stream')
+            $body.Write($b, 0, $b.Length)
+            
+            $body.Write($CRLF, 0, $CRLF.Length)
+            $body.Write($CRLF, 0, $CRLF.Length)
+            
+            $b = [System.IO.File]::ReadAllBytes($file.FullName)
+            $body.Write($b, 0, $b.Length)
+
+            $body.Write($CRLF, 0, $CRLF.Length)
+            $body.Write($b2, 0, $b2.Length)
+            
+            $b = (Get-AsciiBytes '--')
+            $body.Write($b, 0, $b.Length)
+            
+            $body.Write($CRLF, 0, $CRLF.Length)
+            
+                
+            Invoke-RestMethod -Method $method -Uri $u -ContentType $ContentType -Body $body.ToArray()
+            }
+        "uri" {
+            $h = $uri
+            $u = $UriUri
+            $method = 'POST'
+            $body = @{ url = $uri; apikey = $VTApiKey}
+            Invoke-RestMethod -Method $method -Uri $u -Body $body
+            }            
+        }                        
+    }    
+}
+<#
+End of adapted VT code
+#>
