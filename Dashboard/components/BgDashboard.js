@@ -109,7 +109,7 @@ export class BgDashboard extends Component {
         ); 
         
         return (
-            <div>
+            <div display={{ xs: 'none', xl: 'block' }}>
                 <div style={styles.root}>
                     <AppBar style={{background: '#6C8B8C'}} position="static">
                         <Toolbar>
