@@ -41,7 +41,7 @@ namespace FreeEDR.Internal.DataService
 
         public void SendMailAttach(string sender, string recipient, string subject, string body, string attachment)
         {
-            SmtpClient client = new SmtpClient("smtp-mail.outlook.com");
+            SmtpClient client = new SmtpClient("smtp.live.com");
 
             client.Port = 587;
             client.DeliveryMethod = SmtpDeliveryMethod.Network;
