@@ -108,12 +108,11 @@ function Get-Hash() {
     [System.Bitconverter]::tostring($hash).replace('-','')
 }
 
-
 function Query-VirusTotal {
 
     param([string]$Hash)
 
-    $body = @{ resource = $hash; apikey = $VTApiKey }
+    $body = @{ resource = $hash; apikey = "276baa96547e2a405c3751eeb24a33b0bc63a3b965e9cbe6d2c8ddefba54168f" } #hardcoded api value, change as necessary
     $VTReport = Invoke-RestMethod -Method 'POST' -Uri 'https://www.virustotal.com/vtapi/v2/file/report' -Body $body
     $AVScanFound = @()
 
@@ -127,8 +126,6 @@ function Query-VirusTotal {
         }
     }
 
- 
-
     New-Object –TypeName PSObject -Property ([ordered]@{
     MD5 = $VTReport.MD5
     SHA1 = $VTReport.SHA1
@@ -140,40 +137,34 @@ function Query-VirusTotal {
     })
 }
 
+function Query-VirusTotalNet {
 
-function Get-VirusTotalReport {
-    Param (
-    [Parameter(Mandatory=$true, Position=0)]
-    [String]$VTApiKey,
+    param([string]$uri)
 
-    [Parameter(Mandatory=$true, Position=1, ValueFromPipeline=$true, ParameterSetName='byHash')]
-    [String[]] $Hash,
+    $body = @{ resource = $uri; apikey = "276baa96547e2a405c3751eeb24a33b0bc63a3b965e9cbe6d2c8ddefba54168f" } #hardcoded api value, change as necessary
+    $VTReport = Invoke-RestMethod -Method 'POST' -Uri 'https://www.virustotal.com/vtapi/v2/url/report' -Body $body
+    $AVScanFound = @()
 
-    [Parameter(Mandatory=$true, Position=1, ValueFromPipelineByPropertyName=$true, ParameterSetName='byPath')]
-    [Alias('Path', 'FullName')]
-    [String[]] $FilePath
-    )
-
-    Process {
-
-        switch ($PsCmdlet.ParameterSetName) {
-            'byHash' {
-                $Hash | ForEach-Object {
-                    Query-VirusTotal -Hash $_
+    if ($VTReport.positives -gt 0) {
+        foreach($scan in ($VTReport.scans | Get-Member -type NoteProperty)) {
+            if($scan.Definition -match "detected=(?<detected>.*?); version=(?<version>.*?); result=(?<result>.*?); update=(?<update>.*?})") {
+                if($Matches.detected -eq "True") {
+                    $AVScanFound += "{0}({1}) - {2}" -f $scan.Name, $Matches.version, $Matches.result
                 }
             }
+        }
+    }
 
-            'byPath' {
-                $FilePath | ForEach-Object {
-                    Query-VirusTotal -Hash (Get-Hash -FilePath $_) |
-                    Add-Member -MemberType NoteProperty -Name FilePath -Value $_ -PassThru
-                }
-             }
-         }
-     }
+    New-Object –TypeName PSObject -Property ([ordered]@{
+    MD5 = $VTReport.MD5
+    SHA1 = $VTReport.SHA1
+    SHA256 = $VTReport.SHA256
+    VTLink = $VTReport.permalink
+    VTReport = "$($VTReport.positives)/$($VTReport.total)"
+    VTMessage = $VTReport.verbose_msg
+    Engines = $AVScanFound
+    })
 }
-#sample usage of the functions in this section
-#Get-VirusTotalReport -VTApiKey $vtApi -FilePath C:\Users\Public\virustotal.ps1
 
 <#
 	This next section is solely for adapted VirusTotal Code. This is a Virus Total Powershell Module by David B Heise
@@ -258,92 +249,70 @@ function Get-VTReport {
     }    
 }
 
-function Invoke-VTScan {
-    [CmdletBinding()]
-    Param( 
-    [String] $VTApiKey = "276baa96547e2a405c3751eeb24a33b0bc63a3b965e9cbe6d2c8ddefba54168f", #Hardcoded API Key Value
-    [Parameter(ParameterSetName="file", ValueFromPipeline=$true,ValueFromPipelineByPropertyName=$true)]
-        [System.IO.FileInfo] $file,
-    [Parameter(ParameterSetName="uri", ValueFromPipeline=$true,ValueFromPipelineByPropertyName=$true)]
-        [Uri] $uri
-    )
-    Begin {
-        $fileUri = 'https://www.virustotal.com/vtapi/v2/file/scan'
-        $UriUri = 'https://www.virustotal.com/vtapi/v2/url/scan'
-        [byte[]]$CRLF = 13, 10
+#sample usage of the functions in this section
+#Get-VirusTotalReport -FilePath C:\Users\Public\virustotal.ps1
+function Get-VirusTotalReport {
+    Param (
+    [Parameter(Mandatory=$true, Position=0, ValueFromPipeline=$true, ParameterSetName='byHash')]
+    [String[]] $Hash,
 
-        function Get-AsciiBytes([String] $str) {
-            return [System.Text.Encoding]::ASCII.GetBytes($str)            
+    [Parameter(Mandatory=$true, Position=0, ValueFromPipelineByPropertyName=$true, ParameterSetName='byPath')]
+    [Alias('Path', 'FullName')]
+    [String[]] $FilePath,
+	
+    [Parameter(Mandatory=$true, Position=0, ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true, ParameterSetName="byUri")]
+	[String[]] $uri,
+	
+    [Parameter(Mandatory=$true, Position=0, ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true, ParameterSetName="byIP")]
+	[String[]] $ip,
+	
+    [Parameter(Mandatory=$true, Position=0, ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true, ParameterSetName="byDomain")]
+	[String[]] $domain
+    )
+
+    Process {
+
+        switch ($PsCmdlet.ParameterSetName) {
+            'byHash' {
+                $Hash | ForEach-Object {
+                    Query-VirusTotal -Hash $_
+                }
+            }
+
+            'byPath' {
+                $FilePath | ForEach-Object {
+                    Query-VirusTotal -Hash (Get-Hash -FilePath $_) |
+                    Add-Member -MemberType NoteProperty -Name FilePath -Value $_ -PassThru
+				}
+			}
+			
+			'byUri' {
+                $uri | ForEach-Object {
+                    Query-VirusTotalNet -uri $_
+					#Get-VTReport -uri $_
+                }
+            }
+			
+			'byIP' {
+                $ip | ForEach-Object {
+                    Query-VirusTotalNet -uri $_
+					#Get-VTReport -ip $_
+                }
+            }
+			
+			'byDomain' {
+                $domain | ForEach-Object {
+                    Query-VirusTotalNet -uri $_
+					#Get-VTReport -domain $_
+                }
+            }
         }
     }
-    Process {
-        [String] $h = $null
-        [String] $u = $null
-        [String] $method = $null
-        $body = New-Object System.IO.MemoryStream
-
-        switch ($PSCmdlet.ParameterSetName) {
-        "file" { 
-            $u = $fileUri
-            $method = 'POST'
-            $boundary = [Guid]::NewGuid().ToString().Replace('-','')
-            $ContentType = 'multipart/form-data; boundary=' + $boundary
-            $b2 = Get-AsciiBytes ('--' + $boundary)
-            $body.Write($b2, 0, $b2.Length)
-            $body.Write($CRLF, 0, $CRLF.Length)
-            
-            $b = (Get-AsciiBytes ('Content-Disposition: form-data; name="apikey"'))
-            $body.Write($b, 0, $b.Length)
-
-            $body.Write($CRLF, 0, $CRLF.Length)
-            $body.Write($CRLF, 0, $CRLF.Length)
-            
-            $b = (Get-AsciiBytes $VTApiKey)
-            $body.Write($b, 0, $b.Length)
-
-            $body.Write($CRLF, 0, $CRLF.Length)
-            $body.Write($b2, 0, $b2.Length)
-            $body.Write($CRLF, 0, $CRLF.Length)
-            
-            $b = (Get-AsciiBytes ('Content-Disposition: form-data; name="file"; filename="' + $file.Name + '";'))
-            $body.Write($b, 0, $b.Length)
-            $body.Write($CRLF, 0, $CRLF.Length)            
-            $b = (GgetAsciiBytes 'Content-Type:application/octet-stream')
-            $body.Write($b, 0, $b.Length)
-            
-            $body.Write($CRLF, 0, $CRLF.Length)
-            $body.Write($CRLF, 0, $CRLF.Length)
-            
-            $b = [System.IO.File]::ReadAllBytes($file.FullName)
-            $body.Write($b, 0, $b.Length)
-
-            $body.Write($CRLF, 0, $CRLF.Length)
-            $body.Write($b2, 0, $b2.Length)
-            
-            $b = (Get-AsciiBytes '--')
-            $body.Write($b, 0, $b.Length)
-            
-            $body.Write($CRLF, 0, $CRLF.Length)
-            
-                
-            Invoke-RestMethod -Method $method -Uri $u -ContentType $ContentType -Body $body.ToArray()
-            }
-        "uri" {
-            $h = $uri
-            $u = $UriUri
-            $method = 'POST'
-            $body = @{ url = $uri; apikey = $VTApiKey}
-            Invoke-RestMethod -Method $method -Uri $u -Body $body
-            }            
-        }                        
-    }    
 }
+
 <#
 End of adapted VT code
-#>
-}
-<# 
-    This portion of the scrip focuses on reading information from the sysmon event log to include in the custom windows event
+This next portion of the script focuses on reading information from the sysmon event log to include in the custom windows event
 #>
 
 function Read-WindowsEvent {
