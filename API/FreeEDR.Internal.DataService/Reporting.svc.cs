@@ -23,7 +23,8 @@ namespace FreeEDR.Internal.DataService
         public Events GetEvents(string filepath)
         {
             Events r = new Events();
-            string text = System.IO.File.ReadAllText(filepath);
+            var text = File.ReadAllText(filepath);
+            var actualText = text.Substring(text.IndexOf("\n") + 1);
             System.Xml.Serialization.XmlSerializer ser = new System.Xml.Serialization.XmlSerializer(typeof(Events));
 
             using (StringReader sr = new StringReader(text))
