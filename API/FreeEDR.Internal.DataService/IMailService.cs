@@ -21,5 +21,4 @@ namespace FreeEDR.Internal.DataService
         [WebInvoke(Method = "POST", BodyStyle = WebMessageBodyStyle.Wrapped, RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         void SendMailAttach(string sender, string recipient, string subject, string body, string attachment);
     }
-
 }

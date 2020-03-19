@@ -31,7 +31,6 @@ namespace FreeEDR.Internal.DataService
             {
                 r = (Events)ser.Deserialize(sr);
             }
-
             return r;
         }
 
