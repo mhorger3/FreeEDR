@@ -27,23 +27,23 @@ namespace FreeEDR.Internal.DataService
 
         [OperationContract]
         [WebInvoke(Method = "POST", BodyStyle = WebMessageBodyStyle.Wrapped, RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
-        Report GetReport(string name);
+        List<Event> GetReport(int name);
 
         [OperationContract]
         [WebInvoke(Method = "POST", BodyStyle = WebMessageBodyStyle.Wrapped, RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
-        Report GetReportDate(string name, DateTime dt);
+        List<Event> GetReportDate(Report name, DateTime dt);
 
         [OperationContract]
         [WebInvoke(Method = "POST", BodyStyle = WebMessageBodyStyle.Wrapped, RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
-        Report GetReportFormat(string name, FormatOption f);
+        List<Event> GetReportFormat(Report name, FormatOption f);
 
         [OperationContract]
         [WebInvoke(Method = "POST", BodyStyle = WebMessageBodyStyle.Wrapped, RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
-        Report GetReportDateFormat(string name, DateTime dt, FormatOption f);
+        List<Event> GetReportDateFormat(Report name, DateTime dt, FormatOption f);
 
         [OperationContract]
         [WebInvoke(Method = "POST", BodyStyle = WebMessageBodyStyle.Wrapped, RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
-        List<string> GetReportRange(string name, DateTime start, DateTime end);
+        List<string> GetReportRange(Report name, DateTime start, DateTime end);
 
         [OperationContract]
         [WebInvoke(Method = "POST", BodyStyle = WebMessageBodyStyle.Wrapped, RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
@@ -222,7 +222,12 @@ namespace FreeEDR.Internal.DataService
     [DataContract]
     public class Report
     {  
-      
+      // each report is particular to each report ID
+      [DataMember]
+      public int EventID {get; set;}
+
+      [DataMember]
+      public string name { get; set; }
     }
 
     public enum FormatOption
