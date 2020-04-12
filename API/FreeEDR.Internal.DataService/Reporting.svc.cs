@@ -90,19 +90,19 @@ namespace FreeEDR.Internal.DataService
         }
 
         // return a list of events given that time
-        public List<Event> GetReportDate(Report name, DateTime dt)
+        public List<Event> GetReportDate(int name, DateTime dt)
         {
             throw new NotImplementedException();
         }
 
         // return a list of events given that time, and a different format
-        public List<Event> GetReportDateFormat(Report name, DateTime dt, FormatOption f)
+        public List<Event> GetReportDateFormat(int name, DateTime dt, FormatOption f)
         {
             throw new NotImplementedException();
         }
 
         // return a list of events with a different format
-        public List<Event> GetReportFormat(Report name, FormatOption f)
+        public List<Event> GetReportFormat(int name, FormatOption f)
         {
             throw new NotImplementedException();
         }
@@ -191,13 +191,13 @@ namespace FreeEDR.Internal.DataService
         }
 
         // get a list of reports generated given a range
-        public List<string> GetReportRange(Report name, DateTime start, DateTime end)
+        public List<string> GetReportRange(int name, DateTime start, DateTime end)
         {
             throw new NotImplementedException();
         }
 
         // export a report via email
-        public void ExportReport(Report r, string recipient)
+        public void ExportReport(int r, string recipient)
         {
             throw new NotImplementedException();
         }

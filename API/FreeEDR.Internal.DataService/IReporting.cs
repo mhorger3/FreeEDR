@@ -31,23 +31,23 @@ namespace FreeEDR.Internal.DataService
 
         [OperationContract]
         [WebInvoke(Method = "POST", BodyStyle = WebMessageBodyStyle.Wrapped, RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
-        List<Event> GetReportDate(Report name, DateTime dt);
+        List<Event> GetReportDate(int name, DateTime dt);
 
         [OperationContract]
         [WebInvoke(Method = "POST", BodyStyle = WebMessageBodyStyle.Wrapped, RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
-        List<Event> GetReportFormat(Report name, FormatOption f);
+        List<Event> GetReportFormat(int name, FormatOption f);
 
         [OperationContract]
         [WebInvoke(Method = "POST", BodyStyle = WebMessageBodyStyle.Wrapped, RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
-        List<Event> GetReportDateFormat(Report name, DateTime dt, FormatOption f);
+        List<Event> GetReportDateFormat(int name, DateTime dt, FormatOption f);
 
         [OperationContract]
         [WebInvoke(Method = "POST", BodyStyle = WebMessageBodyStyle.Wrapped, RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
-        List<string> GetReportRange(Report name, DateTime start, DateTime end);
+        List<string> GetReportRange(int name, DateTime start, DateTime end);
 
         [OperationContract]
         [WebInvoke(Method = "POST", BodyStyle = WebMessageBodyStyle.Wrapped, RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
-        void ExportReport(Report r, string recipient);
+        void ExportReport(int r, string recipient);
 
     }
 
