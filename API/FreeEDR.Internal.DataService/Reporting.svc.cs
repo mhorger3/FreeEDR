@@ -66,7 +66,7 @@ namespace FreeEDR.Internal.DataService
                 }
             }
 
-            string path = @"X:\Github\FreeEDR\API\Files\report_" + DateTime.Now.ToString("yyyy-m-dd-HH-mm-ss") + ".txt";
+            string path = @"X:\Github\FreeEDR\API\Files\report_" + name + "_" + DateTime.Now.ToString("yyyy_m_dd_HH_mm_ss") + ".txt";
             if (!File.Exists(path))
             {
                 // Create a file to write to.
