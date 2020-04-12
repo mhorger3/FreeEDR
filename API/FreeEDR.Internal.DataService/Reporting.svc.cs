@@ -10,6 +10,10 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
+using PdfSharp.Drawing;
+using PdfSharp.Pdf;
+using PdfSharp.Pdf.IO;
+using PdfSharp;
 
 namespace FreeEDR.Internal.DataService
 {
@@ -61,6 +65,27 @@ namespace FreeEDR.Internal.DataService
                     returnList.Add(e);
                 }
             }
+
+            string path = @"X:\Github\FreeEDR\API\Files\report_" + DateTime.Now.ToString("yyyy-m-dd-HH-mm-ss") + ".txt";
+            if (!File.Exists(path))
+            {
+                // Create a file to write to.
+                using (StreamWriter sw = File.CreateText(path))
+                {
+                    sw.WriteLine("EventData|Message|Time Created");
+                    foreach (Event e in returnList)
+                    {
+                        foreach(var a in e.EventData.Data)
+                        {
+                            sw.Write(a.Name + " " + a.Text + "|");
+                        }
+                        sw.Write(e.RenderingInfo.Message);
+                        sw.Write("|" + e.System.TimeCreated);
+                        sw.WriteLine("");
+                    }
+                }
+            }
+
             return returnList;
         }
 
