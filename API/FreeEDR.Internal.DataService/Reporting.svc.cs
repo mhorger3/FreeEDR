@@ -48,9 +48,22 @@ namespace FreeEDR.Internal.DataService
         }
 
         // get a list of all the reports generated from a given time
-        public List<Report> GetHistoricalReports(DateTime dt)
+        public List<String> GetHistoricalReports(DateTime dt)
         {
-            throw new NotImplementedException();
+            List<String> reports = new List<String>();
+            string[] filePaths = Directory.GetFiles(@"X:\Github\FreeEDR\API\Files");
+            foreach(string x in filePaths)
+            {
+                // for each string, check to see if the datetime of the report is greater than the given time
+                string dateTimeBroke = x.Substring(x.Length - 22, 18);
+                DateTime converted = DateTime.ParseExact(dateTimeBroke, "yyyy_dd_M_HH_mm_ss",
+                                       System.Globalization.CultureInfo.InvariantCulture);
+                if(DateTime.Compare(converted, dt) > 0)
+                {
+                    reports.Add(x);
+                }
+            }
+            return reports;
         }
 
         public List<Event> GetReport(int name)
@@ -66,7 +79,7 @@ namespace FreeEDR.Internal.DataService
                 }
             }
 
-            string path = @"X:\Github\FreeEDR\API\Files\report_" + name + "_" + DateTime.Now.ToString("yyyy_m_dd_HH_mm_ss") + ".txt";
+            string path = @"X:\Github\FreeEDR\API\Files\report_" + name + "_" + DateTime.Now.ToString("yyyy_dd_M_HH_mm_ss") + ".txt";
             if (!File.Exists(path))
             {
                 // Create a file to write to.
