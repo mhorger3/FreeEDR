@@ -10,14 +10,14 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
-using PdfSharp.Drawing;
-using PdfSharp.Pdf;
-using PdfSharp.Pdf.IO;
-using PdfSharp;
 using RestSharp;
 using Newtonsoft.Json.Linq;
 using System.Configuration;
 using Newtonsoft.Json;
+using Spire.Pdf;
+using Spire.Pdf.Grid;
+using Spire.Pdf.Graphics;
+using System.Drawing;
 
 namespace FreeEDR.Internal.DataService
 {
@@ -89,15 +89,13 @@ namespace FreeEDR.Internal.DataService
                 // Create a file to write to.
                 using (StreamWriter sw = File.CreateText(path))
                 {
-                    sw.WriteLine("EventData|Message|Time Created");
+                    sw.WriteLine("EventData");
                     foreach (Event e in returnList)
                     {
                         foreach(var a in e.EventData.Data)
                         {
                             sw.Write(a.Name + " " + a.Text + "|");
                         }
-                        sw.Write(e.RenderingInfo.Message);
-                        sw.Write("|" + e.System.TimeCreated);
                         sw.WriteLine("");
                     }
                 }
@@ -133,15 +131,13 @@ namespace FreeEDR.Internal.DataService
                 // Create a file to write to.
                 using (StreamWriter sw = File.CreateText(path))
                 {
-                    sw.WriteLine("EventData|Message|Time Created");
+                    sw.WriteLine("EventData");
                     foreach (Event e in returnList)
                     {
                         foreach (var a in e.EventData.Data)
                         {
                             sw.Write(a.Name + " " + a.Text + "|");
                         }
-                        sw.Write(e.RenderingInfo.Message);
-                        sw.Write("|" + e.System.TimeCreated);
                         sw.WriteLine("");
                     }
                 }
@@ -153,13 +149,278 @@ namespace FreeEDR.Internal.DataService
         // return a list of events given that time, and a different format
         public List<Event> GetReportDateFormat(int name, DateTime dt, FormatOption f)
         {
-            throw new NotImplementedException();
+            Events r = getLocalEvents();
+            Console.WriteLine(r);
+            List<Event> returnList = new List<Event>();
+            foreach (Event e in r.Event)
+            {
+                if (e.System.EventID == name.ToString())
+                {
+                    // then we need to check for a date
+                    string dateTimeBroke = e.System.TimeCreated.SystemTime.ToString();
+                    DateTime converted = DateTime.Parse(dateTimeBroke, null,
+                                       System.Globalization.DateTimeStyles.RoundtripKind);
+                    if (DateTime.Compare(converted, dt) > 0)
+                    {
+                        returnList.Add(e);
+                    }
+                }
+            }
+            
+            // then we either determine which format we want
+            if (f == FormatOption.PDF)
+            {
+                PdfDocument pdf = new PdfDocument();
+                PdfPageBase page = pdf.Pages.Add();
+                pdf.PageSettings.Orientation = PdfPageOrientation.Landscape;
+                PdfGrid grid = new PdfGrid();
+                PdfStringFormat stringFormatCenter = new PdfStringFormat(PdfTextAlignment.Center, PdfVerticalAlignment.Middle);
+                PdfStringFormat stringFormatLeft = new PdfStringFormat(PdfTextAlignment.Left, PdfVerticalAlignment.Middle);
+                int nestedColumns = 0;
+                foreach (var a in returnList[0].EventData.Data)  // figure out how many columns we want to add
+                {
+                    nestedColumns++;
+                }
+
+                grid.Columns.Add(nestedColumns);
+
+                PdfGridRow valueRow = grid.Rows.Add(); // and the values go here
+                for (int i = 0; i < returnList[0].EventData.Data.Count; i++)
+                {
+                    Data a = returnList[0].EventData.Data[i]; // grab the data at the point
+                    grid.Columns[i].Width = 50f;
+                    if (a.Name != null)
+                    {
+                        if (a.Name.Length > 10)
+                        {
+                            a.Name = a.Name.Substring(0, 10);
+                        }
+                    }
+                    valueRow.Cells[i].Value = a.Name; // sets the column names
+                    valueRow.Cells[i].StringFormat = stringFormatCenter;
+                }
+
+                foreach (Event e in returnList)
+                {
+                    PdfGridRow nameRow = grid.Rows.Add(); // each embed event has a name
+                    int columnPointer = 0;
+                    foreach (var a in e.EventData.Data) // so for each event data, add it to the column then
+                    {
+                        if (a.Text != null)
+                        {
+                            if (a.Text.Length > 10)
+                            {
+                                a.Text = a.Text.Substring(0, 10);
+                            }
+                        }
+                        nameRow.Cells[columnPointer].Value = a.Text;
+                        nameRow.Cells[columnPointer].StringFormat = stringFormatLeft;
+                        columnPointer++;
+                    }
+                }
+                grid.Draw(page, 0, 600);
+                pdf.Pages.RemoveAt(0); // remove the first blank page
+                pdf.SaveToFile(@"X:\Github\FreeEDR\API\Files\report_" + name + "_" + DateTime.Now.ToString("yyyy_dd_M_HH_mm_ss") + ".pdf");
+            }
+            else if (f == FormatOption.CSV)
+            {
+
+                string CSVpath = @"X:\Github\FreeEDR\API\Files\report_" + name + "_" + DateTime.Now.ToString("yyyy_dd_M_HH_mm_ss") + ".csv";
+                if (!File.Exists(CSVpath))
+                {
+                    // Create a file to write to.
+                    using (StreamWriter sw = File.CreateText(CSVpath))
+                    {
+
+                        // first we need to get the a.Name's first
+                        Event e0 = returnList[0];
+                        for (int i = 0; i < e0.EventData.Data.Count; i++)
+                        {
+                            Data a = e0.EventData.Data[i]; // grab the data at the point
+                            if (i + 1 == e0.EventData.Data.Count)
+                            {
+                                sw.Write(a.Name);
+                            }
+                            else
+                            {
+                                sw.Write(a.Name + ",");
+                            }
+                        }
+                        sw.WriteLine("");
+                        foreach (Event e in returnList)
+                        {
+                            for (int i = 0; i < e.EventData.Data.Count; i++)
+                            {
+                                Data a = e.EventData.Data[i]; // grab the data at the point
+                                if (i + 1 == e.EventData.Data.Count)
+                                {
+                                    sw.Write(a.Text);
+                                }
+                                else
+                                {
+                                    sw.Write(a.Text + ",");
+                                }
+                            }
+                            sw.WriteLine("");
+                        }
+                    }
+                }
+            } else if (f == FormatOption.TXT)
+            {
+                string path = @"X:\Github\FreeEDR\API\Files\report_" + name + "_" + DateTime.Now.ToString("yyyy_dd_M_HH_mm_ss") + ".txt";
+                if (!File.Exists(path))
+                {
+                    // Create a file to write to.
+                    using (StreamWriter sw = File.CreateText(path))
+                    {
+                        foreach (Event e in returnList)
+                        {
+                            foreach (var a in e.EventData.Data)
+                            {
+                                sw.Write(a.Name + " " + a.Text + "|");
+                            }
+                            sw.WriteLine("");
+                        }
+                    }
+                }
+            }
+            return returnList;
         }
 
         // return a list of events with a different format
         public List<Event> GetReportFormat(int name, FormatOption f)
         {
-            throw new NotImplementedException();
+            Events r = getLocalEvents();
+            Console.WriteLine(r);
+            List<Event> returnList = new List<Event>();
+            foreach (Event e in r.Event)
+            {
+                if (e.System.EventID == name.ToString())
+                {
+                    returnList.Add(e);
+                }
+            }
+
+            // then we either determine which format we want
+            if (f == FormatOption.PDF)
+            {
+                PdfDocument pdf = new PdfDocument();
+                PdfPageBase page = pdf.Pages.Add();
+                pdf.PageSettings.Orientation = PdfPageOrientation.Landscape;
+                PdfGrid grid = new PdfGrid();
+                PdfStringFormat stringFormatCenter = new PdfStringFormat(PdfTextAlignment.Center, PdfVerticalAlignment.Middle);
+                PdfStringFormat stringFormatLeft = new PdfStringFormat(PdfTextAlignment.Left, PdfVerticalAlignment.Middle);
+                int nestedColumns = 0;
+                foreach (var a in returnList[0].EventData.Data)  // figure out how many columns we want to add
+                {
+                    nestedColumns++;
+                }
+
+                grid.Columns.Add(nestedColumns);
+
+                PdfGridRow valueRow = grid.Rows.Add(); // and the values go here
+                for (int i = 0; i < returnList[0].EventData.Data.Count; i++)
+                {
+                    Data a = returnList[0].EventData.Data[i]; // grab the data at the point
+                    grid.Columns[i].Width = 50f;
+                    if (a.Name != null)
+                    {
+                        if (a.Name.Length > 10)
+                        {
+                            a.Name = a.Name.Substring(0, 10);
+                        }
+                    }
+                    valueRow.Cells[i].Value = a.Name; // sets the column names
+                    valueRow.Cells[i].StringFormat = stringFormatCenter;
+                }
+
+                foreach (Event e in returnList)
+                {
+                    PdfGridRow nameRow = grid.Rows.Add(); // each embed event has a name
+                    int columnPointer = 0;
+                    foreach (var a in e.EventData.Data) // so for each event data, add it to the column then
+                    {
+                        if (a.Text != null)
+                        {
+                            if (a.Text.Length > 10)
+                            {
+                                a.Text = a.Text.Substring(0, 10);
+                            }
+                        }
+                        nameRow.Cells[columnPointer].Value = a.Text;
+                        nameRow.Cells[columnPointer].StringFormat = stringFormatLeft;
+                        columnPointer++;
+                    }
+                }
+                grid.Draw(page, 0, 600);
+                pdf.Pages.RemoveAt(0); // remove the first blank page
+                pdf.SaveToFile(@"X:\Github\FreeEDR\API\Files\report_" + name + "_" + DateTime.Now.ToString("yyyy_dd_M_HH_mm_ss") + ".pdf");
+            }
+            else if (f == FormatOption.CSV)
+            {
+
+                string CSVpath = @"X:\Github\FreeEDR\API\Files\report_" + name + "_" + DateTime.Now.ToString("yyyy_dd_M_HH_mm_ss") + ".csv";
+                if (!File.Exists(CSVpath))
+                {
+                    // Create a file to write to.
+                    using (StreamWriter sw = File.CreateText(CSVpath))
+                    {
+
+                        // first we need to get the a.Name's first
+                        Event e0 = returnList[0];
+                        for (int i = 0; i < e0.EventData.Data.Count; i++)
+                        {
+                            Data a = e0.EventData.Data[i]; // grab the data at the point
+                            if (i + 1 == e0.EventData.Data.Count)
+                            {
+                                sw.Write(a.Name);
+                            }
+                            else
+                            {
+                                sw.Write(a.Name + ",");
+                            }
+                        }
+                        sw.WriteLine("");
+                        foreach (Event e in returnList)
+                        {
+                            for (int i = 0; i < e.EventData.Data.Count; i++)
+                            {
+                                Data a = e.EventData.Data[i]; // grab the data at the point
+                                if (i + 1 == e.EventData.Data.Count)
+                                {
+                                    sw.Write(a.Text);
+                                }
+                                else
+                                {
+                                    sw.Write(a.Text + ",");
+                                }
+                            }
+                            sw.WriteLine("");
+                        }
+                    }
+                }
+            }
+            else if (f == FormatOption.TXT)
+            {
+                string path = @"X:\Github\FreeEDR\API\Files\report_" + name + "_" + DateTime.Now.ToString("yyyy_dd_M_HH_mm_ss") + ".txt";
+                if (!File.Exists(path))
+                {
+                    // Create a file to write to.
+                    using (StreamWriter sw = File.CreateText(path))
+                    {
+                        foreach (Event e in returnList)
+                        {
+                            foreach (var a in e.EventData.Data)
+                            {
+                                sw.Write(a.Name + " " + a.Text + "|");
+                            }
+                            sw.WriteLine("");
+                        }
+                    }
+                }
+            }
+
+            return returnList;
         }
 
         // get all the different options for reports

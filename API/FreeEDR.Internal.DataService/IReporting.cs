@@ -234,7 +234,7 @@ namespace FreeEDR.Internal.DataService
     {
         PDF,
         CSV,
-        DOCX
+        TXT
     }
 
 }
