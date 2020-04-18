@@ -10,16 +10,19 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
+using PdfSharp.Drawing;
+using PdfSharp.Pdf;
+using PdfSharp.Pdf.IO;
+using PdfSharp;
+using RestSharp;
+using Newtonsoft.Json.Linq;
+using System.Configuration;
+using Newtonsoft.Json;
 
 namespace FreeEDR.Internal.DataService
 {
     public class Reporting : IReporting
     {
-        public void ExportReport(Report r, string recipient)
-        {
-            throw new NotImplementedException();
-        }
-
         public Events GetEvents(string filepath)
         {
             Events r = new Events();
@@ -34,39 +37,252 @@ namespace FreeEDR.Internal.DataService
             return r;
         }
 
-        public List<Report> GetHistoricalReports(DateTime dt)
+        private Events getLocalEvents()
+        {
+            Events r = new Events();
+            var text = File.ReadAllText(@"X:\Github\FreeEDR\API\sysmon-export.xml");
+            var actualText = text.Substring(text.IndexOf("\n") + 1);
+            System.Xml.Serialization.XmlSerializer ser = new System.Xml.Serialization.XmlSerializer(typeof(Events));
+
+            using (StringReader sr = new StringReader(text))
+            {
+                r = (Events)ser.Deserialize(sr);
+            }
+            return r;
+        }
+
+        // get a list of all the reports generated from a given time
+        public List<String> GetHistoricalReports(DateTime dt)
+        {
+            List<String> reports = new List<String>();
+            string[] filePaths = Directory.GetFiles(@"X:\Github\FreeEDR\API\Files");
+            foreach(string x in filePaths)
+            {
+                // for each string, check to see if the datetime of the report is greater than the given time
+                string dateTimeBroke = x.Substring(x.Length - 22, 18);
+                DateTime converted = DateTime.ParseExact(dateTimeBroke, "yyyy_dd_M_HH_mm_ss",
+                                       System.Globalization.CultureInfo.InvariantCulture);
+                if(DateTime.Compare(converted, dt) > 0)
+                {
+                    reports.Add(x);
+                }
+            }
+            return reports;
+        }
+
+        public List<Event> GetReport(int name)
+        {
+            Events r = getLocalEvents();
+            Console.WriteLine(r);
+            List<Event> returnList = new List<Event>();
+            foreach(Event e in r.Event)
+            {
+                if(e.System.EventID == name.ToString())
+                {
+                    returnList.Add(e);
+                }
+            }
+
+            string path = @"X:\Github\FreeEDR\API\Files\report_" + name + "_" + DateTime.Now.ToString("yyyy_dd_M_HH_mm_ss") + ".txt";
+            if (!File.Exists(path))
+            {
+                // Create a file to write to.
+                using (StreamWriter sw = File.CreateText(path))
+                {
+                    sw.WriteLine("EventData|Message|Time Created");
+                    foreach (Event e in returnList)
+                    {
+                        foreach(var a in e.EventData.Data)
+                        {
+                            sw.Write(a.Name + " " + a.Text + "|");
+                        }
+                        sw.Write(e.RenderingInfo.Message);
+                        sw.Write("|" + e.System.TimeCreated);
+                        sw.WriteLine("");
+                    }
+                }
+            }
+
+            return returnList;
+        }
+
+        // return a list of events that have happened since that time
+        public List<Event> GetReportDate(int name, DateTime dt)
+        {
+            Events r = getLocalEvents();
+            Console.WriteLine(r);
+            List<Event> returnList = new List<Event>();
+            foreach (Event e in r.Event)
+            {
+                if (e.System.EventID == name.ToString())
+                { // we pull the event
+                  // then we need to check for a date
+                    string dateTimeBroke = e.System.TimeCreated.SystemTime.ToString();
+                    DateTime converted = DateTime.Parse(dateTimeBroke, null,
+                                       System.Globalization.DateTimeStyles.RoundtripKind);
+                    if(DateTime.Compare(converted, dt) > 0)
+                    {
+                        returnList.Add(e);
+                    }
+                }
+            }
+
+            string path = @"X:\Github\FreeEDR\API\Files\report_" + name + "_" + DateTime.Now.ToString("yyyy_dd_M_HH_mm_ss") + ".txt";
+            if (!File.Exists(path))
+            {
+                // Create a file to write to.
+                using (StreamWriter sw = File.CreateText(path))
+                {
+                    sw.WriteLine("EventData|Message|Time Created");
+                    foreach (Event e in returnList)
+                    {
+                        foreach (var a in e.EventData.Data)
+                        {
+                            sw.Write(a.Name + " " + a.Text + "|");
+                        }
+                        sw.Write(e.RenderingInfo.Message);
+                        sw.Write("|" + e.System.TimeCreated);
+                        sw.WriteLine("");
+                    }
+                }
+            }
+
+            return returnList;
+        }
+
+        // return a list of events given that time, and a different format
+        public List<Event> GetReportDateFormat(int name, DateTime dt, FormatOption f)
         {
             throw new NotImplementedException();
         }
 
-        public Report GetReport(string name)
+        // return a list of events with a different format
+        public List<Event> GetReportFormat(int name, FormatOption f)
         {
             throw new NotImplementedException();
         }
 
-        public Report GetReportDate(string name, DateTime dt)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Report GetReportDateFormat(string name, DateTime dt, FormatOption f)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Report GetReportFormat(string name, FormatOption f)
-        {
-            throw new NotImplementedException();
-        }
-
+        // get all the different options for reports
         public List<Report> GetReportOptions()
         {
-            throw new NotImplementedException();
+            List<Report> returnList = new List<Report>();
+            for(int i = 1; i < 23; i++)
+            {
+                Report newR = new Report();
+                newR.EventID = i;
+                switch (i)
+                {
+                    case 1:
+                        newR.name = "Process Creations";
+                        break;
+                    case 2:
+                        newR.name = "Process Changed File Creation Time";
+                        break;
+                    case 3:
+                        newR.name = "Network Connection";
+                        break;
+                    case 4:
+                        newR.name = "Sysmon Service State Changed";
+                        break;
+                    case 5:
+                        newR.name = "Process Terminated";
+                        break;
+                    case 6:
+                        newR.name = "Driver Loaded";
+                        break;
+                    case 7:
+                        newR.name = "Image Loaded";
+                        break;
+                    case 8:
+                        newR.name = "Process Creations";
+                        break;
+                    case 9:
+                        newR.name = "Raw Access Read";
+                        break;
+                    case 10:
+                        newR.name = "Process Access";
+                        break;
+                    case 11:
+                        newR.name = "File Create";
+                        break;
+                    case 12:
+                        newR.name = "Registry Object Create and Delete";
+                        break;
+                    case 13:
+                        newR.name = "Registry Value Set";
+                        break;
+                    case 14:
+                        newR.name = "Registry Key and Value Rename";
+                        break;
+                    case 15:
+                        newR.name = "File Create Stream Hash";
+                        break;
+                    case 17:
+                        newR.name = "Pipe Created";
+                        break;
+                    case 18:
+                        newR.name = "Pipe Connected";
+                        break;
+                    case 19:
+                        newR.name = "WmiEventFilter Activity";
+                        break;
+                    case 20:
+                        newR.name = "WmiEventConsumer Activity";
+                        break;
+                    case 21:
+                        newR.name = "WmiEventConsumerToFilter Activity";
+                        break;
+                    case 22:
+                        newR.name = "DNS Query";
+                        break;
+                }
+                returnList.Add(newR);
+            }
+            Report newReport = new Report();
+            newReport.EventID = 255;
+            newReport.name = "Error";
+            returnList.Add(newReport);
+            return returnList;
         }
 
-        public List<string> GetReportRange(string name, DateTime start, DateTime end)
+        // get a list of reports generated given a range from a start and end time
+        public List<string> GetReportRange(int name, DateTime start, DateTime end)
         {
-            throw new NotImplementedException();
+            List<String> reports = new List<String>();
+            string[] filePaths = Directory.GetFiles(@"X:\Github\FreeEDR\API\Files");
+            foreach (string x in filePaths)
+            {
+                // for each string, check to see if the datetime of the report is greater than the given time
+                string dateTimeBroke = x.Substring(x.Length - 22, 18);
+                DateTime converted = DateTime.ParseExact(dateTimeBroke, "yyyy_dd_M_HH_mm_ss",
+                                       System.Globalization.CultureInfo.InvariantCulture);
+                if ((DateTime.Compare(converted, start) > 0) && (DateTime.Compare(converted, end) < 0))
+                {
+                    string reportName = x.Substring(x.Length - 24, 1);
+                    if(reportName == name.ToString())
+                    {
+                        reports.Add(x);
+                    }
+                }
+            }
+            return reports;
         }
+
+        // export a report via email
+        public string ExportReport(string path, string recipient)
+        {
+            AppSettingsReader reader = new AppSettingsReader();
+            var endpoint = reader.GetValue("MailService", typeof(string)).ToString();
+            var client = new RestClient(endpoint);
+            var request = new RestRequest();
+            request = new RestRequest("SendMailAttach", Method.POST); // get all the investors
+            string body = JsonConvert.SerializeObject(new { sender = "freeEDR@outlook.com", recipient = recipient, subject = "Exported Reports: " + DateTime.Now.ToShortDateString(), body = "Please save your following attachments to view the report. \n -FreeEDR Team", attachment = path });
+            request.RequestFormat = DataFormat.Json; // json format
+            request.AddJsonBody(body);
+            var response = client.Execute(request); // execute the result
+            JObject o = JObject.Parse(response.Content); // parse the content
+            return response.StatusCode.ToString();
+        }
+
     }
 }

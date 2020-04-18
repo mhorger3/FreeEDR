@@ -23,31 +23,31 @@ namespace FreeEDR.Internal.DataService
 
         [OperationContract]
         [WebInvoke(Method = "POST", BodyStyle = WebMessageBodyStyle.Wrapped, RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
-        List<Report> GetHistoricalReports(DateTime dt);
+        List<String> GetHistoricalReports(DateTime dt);
 
         [OperationContract]
         [WebInvoke(Method = "POST", BodyStyle = WebMessageBodyStyle.Wrapped, RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
-        Report GetReport(string name);
+        List<Event> GetReport(int name);
 
         [OperationContract]
         [WebInvoke(Method = "POST", BodyStyle = WebMessageBodyStyle.Wrapped, RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
-        Report GetReportDate(string name, DateTime dt);
+        List<Event> GetReportDate(int name, DateTime dt);
 
         [OperationContract]
         [WebInvoke(Method = "POST", BodyStyle = WebMessageBodyStyle.Wrapped, RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
-        Report GetReportFormat(string name, FormatOption f);
+        List<Event> GetReportFormat(int name, FormatOption f);
 
         [OperationContract]
         [WebInvoke(Method = "POST", BodyStyle = WebMessageBodyStyle.Wrapped, RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
-        Report GetReportDateFormat(string name, DateTime dt, FormatOption f);
+        List<Event> GetReportDateFormat(int name, DateTime dt, FormatOption f);
 
         [OperationContract]
         [WebInvoke(Method = "POST", BodyStyle = WebMessageBodyStyle.Wrapped, RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
-        List<string> GetReportRange(string name, DateTime start, DateTime end);
+        List<string> GetReportRange(int name, DateTime start, DateTime end);
 
         [OperationContract]
         [WebInvoke(Method = "POST", BodyStyle = WebMessageBodyStyle.Wrapped, RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
-        void ExportReport(Report r, string recipient);
+        string ExportReport(string path, string recipient);
 
     }
 
@@ -222,16 +222,19 @@ namespace FreeEDR.Internal.DataService
     [DataContract]
     public class Report
     {  
-      
+      // each report is particular to each report ID
+      [DataMember]
+      public int EventID {get; set;}
+
+      [DataMember]
+      public string name { get; set; }
     }
 
     public enum FormatOption
     {
         PDF,
-        TXT,
         CSV,
-        DOCX,
-        XLS
+        DOCX
     }
 
 }
