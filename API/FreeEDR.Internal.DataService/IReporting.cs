@@ -47,7 +47,7 @@ namespace FreeEDR.Internal.DataService
 
         [OperationContract]
         [WebInvoke(Method = "POST", BodyStyle = WebMessageBodyStyle.Wrapped, RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
-        void ExportReport(int r, string recipient);
+        string ExportReport(string path, string recipient);
 
     }
 
@@ -233,10 +233,8 @@ namespace FreeEDR.Internal.DataService
     public enum FormatOption
     {
         PDF,
-        TXT,
         CSV,
-        DOCX,
-        XLS
+        DOCX
     }
 
 }
