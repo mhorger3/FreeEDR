@@ -60,7 +60,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"sender\": \"freeedr@outlook.com\" , \"recipient\": \"mh3294@drexel.edu\" , \"subject\": \"test\", \"body\": \"this is a test\", \"attachment\": \"\\\\\\\\nasserver\\\\bgimbatch\\\\dev\\\\bin\\\\test.txt\"}",
+							"raw": "{\"sender\": \"freeedr@outlook.com\" , \"recipient\": \"mh3294@drexel.edu\" , \"subject\": \"test\", \"body\": \"this is a test\", \"attachment\": \"X:\\\\Github\\\\FreeEDR\\\\API\\\\FreeEDR.postman_collection.json\"}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -124,7 +124,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"dt\": \"\\/Date(10101010101)\\/\"}",
+							"raw": "{\"dt\": \"\\/Date(1555612866000)\\/\"}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -132,14 +132,14 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:56705/ReportService.svc/GetHistoricalReports",
+							"raw": "http://localhost:56705/Reporting.svc/GetHistoricalReports",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "56705",
 							"path": [
-								"ReportService.svc",
+								"Reporting.svc",
 								"GetHistoricalReports"
 							]
 						},
@@ -161,7 +161,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"name\": \"Report\"}",
+							"raw": "{\"name\": 1}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -169,15 +169,15 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:56705/ReportService.svc/GetHistoricalReports",
+							"raw": "http://localhost:56705/Reporting.svc/GetReport",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "56705",
 							"path": [
-								"ReportService.svc",
-								"GetHistoricalReports"
+								"Reporting.svc",
+								"GetReport"
 							]
 						},
 						"description": "Generates a report given a name"
@@ -198,7 +198,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"dt\": \"\\/Date(10101010101)\\/\", \"name\": \"Report\"}",
+							"raw": "{\"name\": 1, \"dt\": \"\\/Date(1555612866000)\\/\"}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -206,14 +206,14 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:56705/ReportService.svc/GetReportDate",
+							"raw": "http://localhost:56705/Reporting.svc/GetReportDate",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "56705",
 							"path": [
-								"ReportService.svc",
+								"Reporting.svc",
 								"GetReportDate"
 							]
 						},
@@ -235,7 +235,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"name\": \"Report\", \"f\": \"PDF\"}",
+							"raw": "{\"name\": 1, \"f\": 0}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -243,14 +243,14 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:56705/ReportService.svc/GetReportFormat",
+							"raw": "http://localhost:56705/Reporting.svc/GetReportFormat",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "56705",
 							"path": [
-								"ReportService.svc",
+								"Reporting.svc",
 								"GetReportFormat"
 							]
 						},
@@ -272,7 +272,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"name\": \"Report\", \"f\": \"PDF\", \"dt\": \"\\/Date(10101010101)\\/\"}",
+							"raw": "{\"name\": 1, \"dt\": \"\\/Date(1555612866000)\\/\", \"f\": 3}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -280,14 +280,14 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:56705/ReportService.svc/GetReportDateFormat",
+							"raw": "http://localhost:56705/Reporting.svc/GetReportDateFormat",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "56705",
 							"path": [
-								"ReportService.svc",
+								"Reporting.svc",
 								"GetReportDateFormat"
 							]
 						},
@@ -309,7 +309,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"name\": \"Report\", \"start\": \"\\/Date(10101010101)\\/\", \"end\": \"\\/Date(10101010101)\\/\"}",
+							"raw": "{\"name\": 1, \"start\": \"\\/Date(1555612866000)\\/\", \"end\": \"\\/Date(1587235266000)\\/\"}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -317,14 +317,14 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:56705/ReportService.svc/GetReportRange",
+							"raw": "http://localhost:56705/Reporting.svc/GetReportRange",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "56705",
 							"path": [
-								"ReportService.svc",
+								"Reporting.svc",
 								"GetReportRange"
 							]
 						},
@@ -346,7 +346,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"r\": {\"Name\": \"Test\", \"Folder\": \"\\\\\\\\nasserver\\\\bgimbatch\\\\bin\", \"Filepath\": \"\\\\\\\\nasserver\\\\bgimbatch\\\\bin\\\\file.txt\", \"ReportDate\": \"\\/Date(102940201)\\/\", \"Format\": \"PDF\" }, \"recipient\": \"mh3294@drexel.edu\"}",
+							"raw": "{\"path\": \"X:\\\\Github\\\\FreeEDR\\\\API\\\\FreeEDR.postman_collection.json\", \"recipient\": \"mh3294@drexel.edu\"}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -354,15 +354,15 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:56705/ReportService.svc/ExportRange",
+							"raw": "http://localhost:56705/Reporting.svc/ExportReport",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "56705",
 							"path": [
-								"ReportService.svc",
-								"ExportRange"
+								"Reporting.svc",
+								"ExportReport"
 							]
 						},
 						"description": "Exports a report via email"
@@ -378,7 +378,7 @@
 				{
 					"name": "CheckAlive",
 					"request": {
-						"method": "GET",
+						"method": "POST",
 						"header": [],
 						"url": {
 							"raw": "http://localhost:56705/HeartbeatService.svc/CheckAlive",
@@ -423,14 +423,14 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:56705/HeartbeatService.svc/Restart",
+							"raw": "http://localhost:56705/Heartbeat.svc/Restart",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "56705",
 							"path": [
-								"HeartbeatService.svc",
+								"Heartbeat.svc",
 								"Restart"
 							]
 						},
