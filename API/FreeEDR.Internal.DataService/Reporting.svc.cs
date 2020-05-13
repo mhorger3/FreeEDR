@@ -1452,7 +1452,7 @@ namespace FreeEDR.Internal.DataService
                                 }
                                 break;
                             case 6:
-                                if (a.Name == "UtcTime" || a.Name == "ImageLoaded" || a.Name == "Signature" || a.Name == "Computer")
+                                if (a.Name == "UtcTime" || a.Name == "ImageLoaded" || a.Name == "Signature" || a.Name == "User")
                                 {
                                     grid.Columns[columnPointer].Width = 187f;
                                     if (a.Text != null)
