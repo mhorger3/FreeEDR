@@ -6,7 +6,7 @@ import {Select, Paper, InputLabel, MenuItem, Grid, Button, AppBar, Tab, Tabs, Ra
 import { createMuiTheme, MuiThemeProvider } from '@material-ui/core';
 import {FreeEDRIconButton} from '../components/FreeEDRIconButton.js';
 import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile';
-import {BgReportDialog} from '../src/AppDashboard.Helper-1.0.0.0.js';
+import {BgReportDialog, BgTBDDialog} from '../src/AppDashboard.Helper-1.0.0.0.js';
 export class Reports extends Component {
     constructor(props){
 		super(props);
@@ -55,6 +55,9 @@ export class Reports extends Component {
 		BgReportDialog.showModal();
 	}
 
+	launchDialog(){
+		BgTBDDialog.showModal();
+	}
 
 	render(){
 		const { site } = this.props;
@@ -159,7 +162,7 @@ export class Reports extends Component {
 				<MUIDataTable title={"Recent Deployment Reports"} data={deploymentData} columns={columns} options={options}/>
 				<br></br>
 				<h3>Generate Reports</h3>
-				<Button variant="contained" color="default" onClick={() => {this.launchReportDialog()}}>
+				<Button variant="contained" color="default" onClick={() => {this.launchDialog()}}>
 					<InsertDriveFileIcon/>	Open Deployment Dialog
 				</Button>			
 				</div>}
@@ -168,7 +171,7 @@ export class Reports extends Component {
 				<MUIDataTable title={"Recent Logging Reports"} data={loggingData} columns={columns} options={options}/>
 				<br></br>
 				<h3>Generate Reports</h3>
-				<Button variant="contained" color="default">
+				<Button variant="contained" color="default" onClick={() => {this.launchDialog()}}>
 					<InsertDriveFileIcon/>	Open Logging Dialog
 				</Button>
 				</div>}

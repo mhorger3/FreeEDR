@@ -16,6 +16,8 @@ export class Support extends Component {
 		this.handleChange = this.handleChange.bind(this);
 		this.handleRadio = this.handleRadio.bind(this);
 		this.handleSelect = this.handleSelect.bind(this);
+		this.handleSubmit = this.handleSubmit.bind(this);
+		this.handleRequestSubmit = this.handleRequestSubmit.bind(this);
 	};
 
 	handleChange(event, value){
@@ -36,6 +38,22 @@ export class Support extends Component {
 		});
 	}
 
+	handleSubmit(){
+		axios.get(`http://localhost:56705/MailService.svc/GetMail/?sender=` + "freeEDR@outlook.com" + "&recipient=" + document.getElementById('DomaintextFieldEmail').value + "&subject=" + "New Incident " + document.getElementById('DomaintextFieldDate').value + "&body=" + document.getElementById('DomaintextFieldRequest').value)
+		.then(res => {
+		  const data = res.data.GetMailResult;
+		  window.alert("Form Submitted");
+		})
+	}
+
+	handleRequestSubmit(){
+		axios.get(`http://localhost:56705/MailService.svc/GetMail/?sender=` + "freeEDR@outlook.com" + "&recipient=" + document.getElementById('RequesttextFieldEmail').value + "&subject=" + "New Request " + document.getElementById('RequesttextFieldDate').value + "&body=" + document.getElementById('RequesttextFieldRequest').value)
+		.then(res => {
+		  const data = res.data.GetMailResult;
+		  window.alert("Form Submitted");
+		})
+	}
+
 	render(){
 		const { site } = this.props;
 		const { value, radio, support} = this.state;
@@ -53,13 +71,13 @@ export class Support extends Component {
 				<Grid container	spacing={0}	direction="column"	alignItems="center"	justify="center">
 					<br></br>
 					<br></br>
-					<TextField id="textFieldName" label="Domain Name" value="FreeEDR/mhorger" size="large" style = {{width: 800}}/>
+					<TextField id="DomaintextFieldName" label="Domain Name" value="FreeEDR/mhorger" size="large" style = {{width: 800}}/>
 					<br></br>
 					<br></br>
-					<TextField id="textFieldEmail" label="Email" size="large" style = {{width: 800}} />
+					<TextField id="DomaintextFieldEmail" label="Email" size="large" style = {{width: 800}} />
 					<br></br>
 					<br></br>
-					<TextField id="textFieldDate" label="Date" size="large" style = {{width: 800}} />
+					<TextField id="DomaintextFieldDate" label="Date" size="large" style = {{width: 800}} />
 					<br></br>
 					<br></br>
 					<InputLabel id="selectSupportStaff">Critical Level</InputLabel>
@@ -70,7 +88,7 @@ export class Support extends Component {
 						<MenuItem value="Severe - 1">Severe</MenuItem>
 					</Select>
 					<br></br><br></br>	<br></br>
-					<TextField id="textFieldRequest" id="outlined-multiline-static"
+					<TextField id="DomaintextFieldRequest"
 					label="Incident Information"
 					multiline
 					rows="4"
@@ -81,7 +99,7 @@ export class Support extends Component {
 						Upload Screenshots
 					</Button>
 					<br></br><br></br>
-					<Button variant="contained" color="primary">
+					<Button variant="contained" color="primary" onClick={() => {this.handleSubmit()}}>
 						Submit Incident
 					</Button>
 					</Grid>   			
@@ -121,25 +139,25 @@ export class Support extends Component {
 					</FormControl>	
 					<br></br>
 					<br></br>
-					<TextField id="textFieldName" label="Domain Name" value="FreeEDR/mhorger" size="large" style = {{width: 800}}/>
+					<TextField id="RequesttextFieldName" label="Domain Name" value="FreeEDR/mhorger" size="large" style = {{width: 800}}/>
 					<br></br>
 					<br></br>
-					<TextField id="textFieldEmail" label="Email" size="large" style = {{width: 800}} />
+					<TextField id="RequesttextFieldEmail" label="Email" size="large" style = {{width: 800}} />
 					<br></br>
 					<br></br>
-					<TextField id="textFieldDate" label="Date" size="large" style = {{width: 800}} />
+					<TextField id="RequesttextFieldDate" label="Date" size="large" style = {{width: 800}} />
 					<br></br>
 					<br></br>
 					<TextField id="textFieldName" label="Request Type" value={radio} size="large" style = {{width: 800}} />
 					<br></br><br></br>	<br></br>
-					<TextField id="textFieldRequest" label="Request Information" id="outlined-multiline-static"
+					<TextField id="RequesttextFieldRequest" label="Request Information"
 					label="Request Information"
 					multiline
 					rows="4"
 					defaultValue="Please put your request information here."
 					variant="outlined" style = {{width: 800}}/>
 					<br></br><br></br>
-					<Button variant="contained" color="primary">
+					<Button variant="contained" color="primary" onClick={() => {this.handleRequestSubmit()}}>
 						Submit Request
 					</Button>
 					</Grid>   			

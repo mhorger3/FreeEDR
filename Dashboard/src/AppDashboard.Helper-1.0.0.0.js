@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import axios from 'axios'
 import {BgDialog} from '../components/BgDialog.js';
-import {Radio, Button, RadioGroup, FormHelperText, FormControlLabel, FormControl, FormLabel} from '@material-ui/core';
+import {Radio, Button, RadioGroup, FormHelperText, FormControlLabel, FormControl, FormLabel, TextField} from '@material-ui/core';
 
 export class BgReportDialog extends BgDialog
 {
@@ -12,6 +12,7 @@ export class BgReportDialog extends BgDialog
             selectedStatus: 0,
             format: "",
             email: "",
+            returnSet: "",
         }
     };
 
@@ -35,8 +36,35 @@ export class BgReportDialog extends BgDialog
         });
     }
 
-    processData(selectedStatus){
+    handleEmailChange(event){
+        this.setState({
+            email: event.taget.value
+        });
+    }
 
+    processData(selectedStatus, format){
+        var emailField = document.getElementById('emailField').value;
+        axios.get(`http://localhost:56705/Reporting.svc/GetReportFormat/?name=` + selectedStatus + "&f=" + format)
+		  .then(res => {
+			const data = res.data.GetReportFormatResult;
+            console.log(data);
+            if(data != null){
+                this.setState({ returnSet: data });
+                if(emailField == ""){  
+                    this.handleClose();          
+                } else {
+                    console.log(emailField);
+                    axios.get(`http://localhost:56705/Reporting.svc/ExportReport/?path=` + data + "&recipient=" + emailField)
+                    .then(res => {
+                      const data = res.data.ExportReport;
+                      window.alert("Report Exported");
+                      this.handleClose();
+                    })
+                }
+            } else {
+                this.handleClose();
+            }
+        });
     }
 
     render(){
@@ -80,11 +108,47 @@ export class BgReportDialog extends BgDialog
                     </RadioGroup>
                     <br></br>
                     Export via Email:
-                    
-                </FormControl>
+                    <TextField id='emailField' label=""/>
+                    </FormControl>
                 <br></br>
                 <span style={{display: 'inline', float: 'right'}}>
-                    <Button id="generateReport" onClick={() => {this.processData(this.state.selectedStatus)}}>Generate </Button>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <Button id="generateReport" onClick={() => {this.processData(this.state.selectedStatus, this.state.format)}}>Generate </Button>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <Button id="cancelReport" onClick={() => {this.checkData()}}>Cancel </Button>
+                </span>
+                </div>
+            </BgDialog>
+        );
+    }
+}
+
+export class BgTBDDialog extends BgDialog
+{
+    constructor(props){
+        super(props);
+        this.state = {
+            selectedStatus: 0,
+            format: "",
+            email: "",
+            returnSet: "",
+        }
+    };
+
+    static showModal(){
+        ReactDOM.render(<BgTBDDialog/>, document.getElementById('dialogContainer'));
+    };
+
+    checkData(){
+        this.handleClose();
+    };
+
+    render(){
+        return(
+            <BgDialog onClose={() => {this.checkData()}}>
+                <div style={{padding: '1em'}}>
+                Coming Soon...
+                <br></br>
+                <br></br>
+                <span style={{display: 'inline', float: 'right'}}>
                     <Button id="cancelReport" onClick={() => {this.checkData()}}>Cancel </Button>
                 </span>
                 </div>

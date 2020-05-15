@@ -990,7 +990,7 @@ namespace FreeEDR.Internal.DataService
         }
 
         // return a list of events with a different format
-        public List<Event> GetReportFormat(int name, FormatOption f)
+        public string GetReportFormat(int name, FormatOption f)
         {
             Events r = getLocalEvents();
             Console.WriteLine(r);
@@ -1002,7 +1002,7 @@ namespace FreeEDR.Internal.DataService
                     returnList.Add(e);
                 }
             }
-
+            string path = "";
             // then we either determine which format we want
             if (f == FormatOption.PDF)
             {
@@ -1028,6 +1028,11 @@ namespace FreeEDR.Internal.DataService
 
                 PdfGridRow valueRow = grid.Rows.Add(); // and the values go here
                 int j = 0; // need to use this for our actual column count
+                if(returnList == null)
+                {
+                    return "";
+                }
+
                 for (int i = 0; i < returnList[0].EventData.Data.Count; i++)
                 {
                     Data a = returnList[0].EventData.Data[i]; // grab the data at the point
@@ -1724,16 +1729,17 @@ namespace FreeEDR.Internal.DataService
                 }
                 grid.Draw(page, 0, 600);
                 pdf.Pages.RemoveAt(0); // remove the first blank page
+                path = @"X:\Github\FreeEDR\API\Files\report_" + name + "_" + DateTime.Now.ToString("yyyy_dd_M_HH_mm_ss") + ".pdf";
                 pdf.SaveToFile(@"X:\Github\FreeEDR\API\Files\report_" + name + "_" + DateTime.Now.ToString("yyyy_dd_M_HH_mm_ss") + ".pdf");
             }
             else if (f == FormatOption.CSV)
             {
 
-                string CSVpath = @"X:\Github\FreeEDR\API\Files\report_" + name + "_" + DateTime.Now.ToString("yyyy_dd_M_HH_mm_ss") + ".csv";
-                if (!File.Exists(CSVpath))
+                path = @"X:\Github\FreeEDR\API\Files\report_" + name + "_" + DateTime.Now.ToString("yyyy_dd_M_HH_mm_ss") + ".csv";
+                if (!File.Exists(path))
                 {
                     // Create a file to write to.
-                    using (StreamWriter sw = File.CreateText(CSVpath))
+                    using (StreamWriter sw = File.CreateText(path))
                     {
 
                         // first we need to get the a.Name's first
@@ -1772,7 +1778,7 @@ namespace FreeEDR.Internal.DataService
             }
             else if (f == FormatOption.TXT)
             {
-                string path = @"X:\Github\FreeEDR\API\Files\report_" + name + "_" + DateTime.Now.ToString("yyyy_dd_M_HH_mm_ss") + ".txt";
+                path = @"X:\Github\FreeEDR\API\Files\report_" + name + "_" + DateTime.Now.ToString("yyyy_dd_M_HH_mm_ss") + ".txt";
                 if (!File.Exists(path))
                 {
                     // Create a file to write to.
@@ -1790,7 +1796,7 @@ namespace FreeEDR.Internal.DataService
                 }
             }
 
-            return returnList;
+            return path;
         }
 
         // get all the different options for reports
