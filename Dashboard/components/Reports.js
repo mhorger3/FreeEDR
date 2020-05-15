@@ -6,13 +6,17 @@ import {Select, Paper, InputLabel, MenuItem, Grid, Button, AppBar, Tab, Tabs, Ra
 import { createMuiTheme, MuiThemeProvider } from '@material-ui/core';
 import {FreeEDRIconButton} from '../components/FreeEDRIconButton.js';
 import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile';
+import {BgReportDialog} from '../src/AppDashboard.Helper-1.0.0.0.js';
 export class Reports extends Component {
     constructor(props){
 		super(props);
 		this.state = {
-			value: 0
+			value: 0,
+			reports: []
 		};
+		this.handleFileOpen = this.handleFileOpen.bind(this);
 		this.handleChange = this.handleChange.bind(this);
+		this.launchReportDialog = this.launchReportDialog.bind(this);
 	};
 
 	handleChange(event, value){
@@ -21,16 +25,47 @@ export class Reports extends Component {
 		});
 	}
 
+	componentDidMount() {
+		axios.get(`http://localhost:56705/Reporting.svc/GetReports`)
+		  .then(res => {
+			const data = res.data.GetReportsResult;
+			const reportList = [];
+			for(var i = 0; i < data.length; i++){
+				const newData = [];
+				var text = data[i];
+				var report = text.substr(28, text.length);
+				var name = "Event Report " + report.substr(7, 1);
+				var date = report.substr(9, text.length - 4);
+				date = date.substr(0, date.length - 4);
+				var dateParams = date.split('_');
+				var dateFormat = new Date(dateParams[0], dateParams[2], dateParams[1], dateParams[3], dateParams[4], dateParams[5])
+				newData[i] = [name, dateFormat.toDateString(), text, 'API', 'http://127.0.0.1:8887/' + report];
+				reportList[i] = newData[i];
+			}
+			this.setState({ reports: reportList });
+		  })
+	}
+
+	handleFileOpen(value){
+		console.log(value);
+		window.open(value);
+	};
+
+	launchReportDialog(){
+		BgReportDialog.showModal();
+	}
+
+
 	render(){
 		const { site } = this.props;
-		const { value } = this.state;
+		const { value, reports } = this.state;
 		const options = {
 			filterType: 'dropdown',
 			selectableRows: false,
 			downloadOptions: {
 				filename: 'RecentReports.csv', separator: ','
 			},
-			rowsPerPage: 3,
+			rowsPerPage: 5,
 		    rowsPerPageOptions: [3,5,8],
 		};
 		const chipTheme = createMuiTheme({
@@ -41,30 +76,6 @@ export class Reports extends Component {
 			},
 			typography: { useNextVariants: true },
 		  });
-		const data = [
-			["Daily Event Log", "11-3-2019 10:12:00Z", "C:\\inetpub\\LogFiles\\wscvsm1\\dailyEvent_11_3_19_10_12.log", "IncidentTeam", "C:\\inetpub\\LogFiles\\wscvsm1\\dailyEvent_11_3_19_10_12.log"],
-			["Daily IIS Log", "11-3-2019 10:10:00Z", "C:\\inetpub\\LogFiles\\wscvsm1\\dailyIIS_11_3_19_10_10.log", "IncidentTeam", "C:\\inetpub\\LogFiles\\wscvsm1\\dailyIIS_11_3_19_10_10.log"],
-			["Daily Audit Log", "11-3-2019 10:05:00Z", "C:\\inetpub\\LogFiles\\wscvsm1\\dailyAudit_11_3_19_10_12.log", "IncidentTeam", "C:\\inetpub\\LogFiles\\wscvsm1\\dailyAudit_11_3_19_10_05.log"],
-			["User Application Log", "11-1-2019 10:12:00Z", "C:\\inetpub\\LogFiles\\wscvsm1\\userApp_11_1_19_10_12.log", "IncidentTeam", "C:\\inetpub\\LogFiles\\wscvsm1\\userApp_11_1_19_10_12.log"],
-			["Daily Event Log", "11-1-2019 10:12:00Z", "C:\\inetpub\\LogFiles\\wscvsm1\\dailyEvent_11_1_19_10_12.log", "IncidentTeam", "C:\\inetpub\\LogFiles\\wscvsm1\\dailyEvent_11_1_19_10_12.log"],
-			["Daily Event Log", "11-1-2019 10:10:00Z", "C:\\inetpub\\LogFiles\\wscvsm1\\dailyEvent_11_1_19_10_10.log", "IncidentTeam", "C:\\inetpub\\LogFiles\\wscvsm1\\dailyEvent_11_1_19_10_10.log"],
-			["Daily IIS Log", "10-29-2019 10:10:00Z", "C:\\inetpub\\LogFiles\\wscvsm1\\dailyIIS_10_29_19_10_10.log", "IncidentTeam", "C:\\inetpub\\LogFiles\\wscvsm1\\dailyIIS_10_29_19_10_10.log"],
-			["Daily Audit Log", "10-29-2019 10:05:00Z", "C:\\inetpub\\LogFiles\\wscvsm1\\dailyAudit_10_29_19_10_12.log", "IncidentTeam", "C:\\inetpub\\LogFiles\\wscvsm1\\dailyAudit_10_29_19_10_12.log"],
-			["User Application Log", "10-29-2019 10:12:00Z", "C:\\inetpub\\LogFiles\\wscvsm1\\userApp_10_29_19_10_12.log", "IncidentTeam", "C:\\inetpub\\LogFiles\\wscvsm1\\userApp_10_29_19_10_12.log"],
-			["Daily Event Log", "10-28-2019 10:12:00Z", "C:\\inetpub\\LogFiles\\wscvsm1\\dailyEvent_10_28_19_10_12.log", "IncidentTeam", "C:\\inetpub\\LogFiles\\wscvsm1\\dailyEvent_10_28_19_10_12.log"],
-			["Daily IIS Log", "10-28-2019 10:10:00Z", "C:\\inetpub\\LogFiles\\wscvsm1\\dailyIIS_10_28_19_10_10.log", "IncidentTeam", "C:\\inetpub\\LogFiles\\wscvsm1\\dailyIIS_10_28_19_10_10.log"],
-			["Daily Audit Log", "10-28-2019 10:05:00Z", "C:\\inetpub\\LogFiles\\wscvsm1\\dailyAudit_10_28_19_10_12.log", "IncidentTeam", "C:\\inetpub\\LogFiles\\wscvsm1\\dailyAudit_10_28_19_10_12.log"],
-			["User Application Log", "10-28-2019 10:12:00Z", "C:\\inetpub\\LogFiles\\wscvsm1\\userApp_10_28_19_10_12.log", "IncidentTeam", "C:\\inetpub\\LogFiles\\wscvsm1\\userApp_10_28_19_10_12.log"],
-			["Daily Event Log", "10-27-2019 10:12:00Z", "C:\\inetpub\\LogFiles\\wscvsm1\\dailyEvent_10_27_19_10_12.log", "IncidentTeam", "C:\\inetpub\\LogFiles\\wscvsm1\\dailyEvent_10_27_19_10_12.log"],
-		];
-
-		const eventData = [
-			["Daily Event Log", "11-3-2019 10:12:00Z", "C:\\inetpub\\LogFiles\\wscvsm1\\dailyEvent_11_3_19_10_12.log", "IncidentTeam", "C:\\inetpub\\LogFiles\\wscvsm1\\dailyEvent_11_3_19_10_12.log"],
-			["Daily Event Log", "11-1-2019 10:12:00Z", "C:\\inetpub\\LogFiles\\wscvsm1\\dailyEvent_11_1_19_10_12.log", "IncidentTeam", "C:\\inetpub\\LogFiles\\wscvsm1\\dailyEvent_11_1_19_10_12.log"],
-			["Daily Event Log", "11-1-2019 10:10:00Z", "C:\\inetpub\\LogFiles\\wscvsm1\\dailyEvent_11_1_19_10_10.log", "IncidentTeam", "C:\\inetpub\\LogFiles\\wscvsm1\\dailyEvent_11_1_19_10_10.log"],
-			["Daily Event Log", "10-28-2019 10:12:00Z", "C:\\inetpub\\LogFiles\\wscvsm1\\dailyEvent_10_28_19_10_12.log", "IncidentTeam", "C:\\inetpub\\LogFiles\\wscvsm1\\dailyEvent_10_28_19_10_12.log"],
-			["Daily Event Log", "10-27-2019 10:12:00Z", "C:\\inetpub\\LogFiles\\wscvsm1\\dailyEvent_10_27_19_10_12.log", "IncidentTeam", "C:\\inetpub\\LogFiles\\wscvsm1\\dailyEvent_10_27_19_10_12.log"],
-		];
 
 		const loggingData = [
 			["Daily IIS Log", "11-3-2019 10:10:00Z", "C:\\inetpub\\LogFiles\\wscvsm1\\dailyIIS_11_3_19_10_10.log", "IncidentTeam", "C:\\inetpub\\LogFiles\\wscvsm1\\dailyIIS_11_3_19_10_10.log"],
@@ -76,8 +87,6 @@ export class Reports extends Component {
 		];
 
 		const deploymentData = [
-		
-
 		];
 
 		const theme = {
@@ -120,7 +129,7 @@ export class Reports extends Component {
 					sort: false,
 					customBodyRender: (value, tableMeta, updateValue) => {
 						return (
-							<FreeEDRIconButton color="Primary" airaLabel="Download Report" icon="create"/>
+							<FreeEDRIconButton color="Primary" airaLabel="Download Report" icon="create" onClick={() => {this.handleFileOpen(value)}}/>
 						)
 					}
 				}
@@ -138,148 +147,35 @@ export class Reports extends Component {
 				</AppBar>
 				{value === 0 && <div id="content">
 				<br></br>
-				<MUIDataTable title={"Recent Event Reports"} data={eventData} columns={columns} options={options}/>
+				<MUIDataTable title={"Recent Event Reports"} data={reports} columns={columns} options={options}/>
 				<br></br>
 				<h3>Generate Reports</h3>
-				<Grid container spacing={24}>
-					<Grid item xs={6} sm={6}>
-					<Paper>
-						<Button variant="contained" color="default">
-							<InsertDriveFileIcon/>	Report 1
-						</Button>
-						<br></br> <br></br>
-						<Button variant="contained"	color="default">
-						<InsertDriveFileIcon/>	Report 2
-						</Button>
-						<br></br> <br></br>
-						<Button variant="contained"	color="default">
-						<InsertDriveFileIcon/>	Report 3
-						</Button>
-						<br></br> <br></br>
-						<Button variant="contained"	color="default">
-						<InsertDriveFileIcon/>	Report 4
-						</Button>
-					</Paper>
-					</Grid>
-					<Grid item xs={6} sm={6}>
-					<Paper>
-						<Button variant="contained"	color="default">
-							<InsertDriveFileIcon/>	Report 5
-						</Button>
-						<br></br> <br></br>
-						<Button variant="contained"	color="default">
-						<InsertDriveFileIcon/>	Report 6
-						</Button>
-						<br></br> <br></br>
-						<Button variant="contained"	color="default">
-						<InsertDriveFileIcon/>	Report 7
-						</Button>
-						<br></br> <br></br>
-						<Button variant="contained"	color="default">
-						<InsertDriveFileIcon/>	Report 8
-						</Button>
-					</Paper>
-					</Grid>
-				</Grid>						
+				<Button variant="contained" color="default" onClick={() => {this.launchReportDialog()}}>
+					<InsertDriveFileIcon/>	Open Event Dialog
+				</Button>				
 				</div>}
 				{value === 1 && <div id="content">
 				<br></br>
 				<MUIDataTable title={"Recent Deployment Reports"} data={deploymentData} columns={columns} options={options}/>
 				<br></br>
 				<h3>Generate Reports</h3>
-				<Grid container spacing={24}>
-					<Grid item xs={6} sm={6}>
-					<Paper>
-						<Button variant="contained" color="default">
-							<InsertDriveFileIcon/>	Report 1
-						</Button>
-						<br></br> <br></br>
-						<Button variant="contained"	color="default">
-						<InsertDriveFileIcon/>	Report 2
-						</Button>
-						<br></br> <br></br>
-						<Button variant="contained"	color="default">
-						<InsertDriveFileIcon/>	Report 3
-						</Button>
-						<br></br> <br></br>
-						<Button variant="contained"	color="default">
-						<InsertDriveFileIcon/>	Report 4
-						</Button>
-					</Paper>
-					</Grid>
-					<Grid item xs={6} sm={6}>
-					<Paper>
-						<Button variant="contained"	color="default">
-							<InsertDriveFileIcon/>	Report 5
-						</Button>
-						<br></br> <br></br>
-						<Button variant="contained"	color="default">
-						<InsertDriveFileIcon/>	Report 6
-						</Button>
-						<br></br> <br></br>
-						<Button variant="contained"	color="default">
-						<InsertDriveFileIcon/>	Report 7
-						</Button>
-						<br></br> <br></br>
-						<Button variant="contained"	color="default">
-						<InsertDriveFileIcon/>	Report 8
-						</Button>
-					</Paper>
-					</Grid>
-				</Grid>	
-					
-					
+				<Button variant="contained" color="default" onClick={() => {this.launchReportDialog()}}>
+					<InsertDriveFileIcon/>	Open Deployment Dialog
+				</Button>			
 				</div>}
 				{value === 2 && <div id="content">
 				<br></br>
 				<MUIDataTable title={"Recent Logging Reports"} data={loggingData} columns={columns} options={options}/>
 				<br></br>
 				<h3>Generate Reports</h3>
-				<Grid container spacing={24}>
-					<Grid item xs={6} sm={6}>
-					<Paper>
-						<Button variant="contained" color="default">
-							<InsertDriveFileIcon/>	Report 1
-						</Button>
-						<br></br> <br></br>
-						<Button variant="contained"	color="default">
-						<InsertDriveFileIcon/>	Report 2
-						</Button>
-						<br></br> <br></br>
-						<Button variant="contained"	color="default">
-						<InsertDriveFileIcon/>	Report 3
-						</Button>
-						<br></br> <br></br>
-						<Button variant="contained"	color="default">
-						<InsertDriveFileIcon/>	Report 4
-						</Button>
-					</Paper>
-					</Grid>
-					<Grid item xs={6} sm={6}>
-					<Paper>
-						<Button variant="contained"	color="default">
-							<InsertDriveFileIcon/>	Report 5
-						</Button>
-						<br></br> <br></br>
-						<Button variant="contained"	color="default">
-						<InsertDriveFileIcon/>	Report 6
-						</Button>
-						<br></br> <br></br>
-						<Button variant="contained"	color="default">
-						<InsertDriveFileIcon/>	Report 7
-						</Button>
-						<br></br> <br></br>
-						<Button variant="contained"	color="default">
-						<InsertDriveFileIcon/>	Report 8
-						</Button>
-					</Paper>
-					</Grid>
-				</Grid>		
+				<Button variant="contained" color="default">
+					<InsertDriveFileIcon/>	Open Logging Dialog
+				</Button>
 				</div>}
 				{value === 3 && <div id="content">
 				<h4> Below is the list of reports that were recently generated by the system users.</h4>
 				<h4> In order to download the reports, please double click on the intended icon in the row of the report.</h4>
-				<MUIDataTable title={"Recent Reports"} data={data} columns={columns} options={options}/></div>}
+				<MUIDataTable title={"Recent Reports"} data={reports} columns={columns} options={options}/></div>}
 			</div>
 		)
 	}

@@ -51,6 +51,18 @@ namespace FreeEDR.Internal.DataService
             return r;
         }
 
+        public List<String> GetReports()
+        {
+            List<String> reports = new List<String>();
+            string[] filePaths = Directory.GetFiles(@"X:\Github\FreeEDR\API\Files");
+            foreach (string x in filePaths)
+            {
+               reports.Add(x);
+            }
+            return reports;
+        }
+
+
         // get a list of all the reports generated from a given time
         public List<String> GetHistoricalReports(DateTime dt)
         {
