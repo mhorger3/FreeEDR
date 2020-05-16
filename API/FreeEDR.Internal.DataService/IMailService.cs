@@ -20,5 +20,14 @@ namespace FreeEDR.Internal.DataService
         [OperationContract]
         [WebInvoke(Method = "POST", BodyStyle = WebMessageBodyStyle.Wrapped, RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         void SendMailAttach(string sender, string recipient, string subject, string body, string attachment);
+
+        [OperationContract]
+        [WebInvoke(Method = "GET", UriTemplate = "/GetMailAttach/?sender={sender}&recipient={recipient}&subject={subject}&body={body}&attachment={attachment}", BodyStyle = WebMessageBodyStyle.Wrapped, RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        void GetMailAttach(string sender, string recipient, string subject, string body, string attachment);
+
+        [OperationContract]
+        [WebInvoke(Method = "GET", UriTemplate = "/GetMail/?sender={sender}&recipient={recipient}&subject={subject}&body={body}", BodyStyle = WebMessageBodyStyle.Wrapped, RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        void GetMail(string sender, string recipient, string subject, string body);
+
     }
 }

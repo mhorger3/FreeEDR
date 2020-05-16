@@ -22,11 +22,15 @@ namespace FreeEDR.Internal.DataService
         List<Report> GetReportOptions();
 
         [OperationContract]
+        [WebInvoke(Method = "GET", BodyStyle = WebMessageBodyStyle.Wrapped, RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        List<String> GetReports();
+
+        [OperationContract]
         [WebInvoke(Method = "POST", BodyStyle = WebMessageBodyStyle.Wrapped, RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         List<String> GetHistoricalReports(DateTime dt);
 
         [OperationContract]
-        [WebInvoke(Method = "POST", BodyStyle = WebMessageBodyStyle.Wrapped, RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        [WebInvoke(Method = "GET", UriTemplate = "/GetReport/?name={name}", BodyStyle = WebMessageBodyStyle.Wrapped, RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         List<Event> GetReport(int name);
 
         [OperationContract]
@@ -34,8 +38,8 @@ namespace FreeEDR.Internal.DataService
         List<Event> GetReportDate(int name, DateTime dt);
 
         [OperationContract]
-        [WebInvoke(Method = "POST", BodyStyle = WebMessageBodyStyle.Wrapped, RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
-        List<Event> GetReportFormat(int name, FormatOption f);
+        [WebInvoke(Method = "GET", UriTemplate = "/GetReportFormat/?name={name}&f={f}", BodyStyle = WebMessageBodyStyle.Wrapped, RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        string GetReportFormat(int name, FormatOption f);
 
         [OperationContract]
         [WebInvoke(Method = "POST", BodyStyle = WebMessageBodyStyle.Wrapped, RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
@@ -46,7 +50,7 @@ namespace FreeEDR.Internal.DataService
         List<string> GetReportRange(int name, DateTime start, DateTime end);
 
         [OperationContract]
-        [WebInvoke(Method = "POST", BodyStyle = WebMessageBodyStyle.Wrapped, RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        [WebInvoke(Method = "GET", UriTemplate = "/ExportReport/?path={path}&recipient={recipient}", BodyStyle = WebMessageBodyStyle.Wrapped, RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         string ExportReport(string path, string recipient);
 
     }

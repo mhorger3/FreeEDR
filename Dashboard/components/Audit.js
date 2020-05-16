@@ -6,6 +6,7 @@ import {Select, Paper, InputLabel, MenuItem, Grid, Button, AppBar, Tab, Tabs, Ra
 import { createMuiTheme, MuiThemeProvider } from '@material-ui/core';
 import {FreeEDRIconButton} from '../components/FreeEDRIconButton.js';
 import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile';
+import {BgTBDDialog} from '../src/AppDashboard.Helper-1.0.0.0.js';
 export class Audit extends Component {
     constructor(props){
 		super(props);
@@ -19,6 +20,10 @@ export class Audit extends Component {
 	    this.setState({
 	    	 value: value 
 		});
+	}
+
+	launchDialog(){
+		BgTBDDialog.showModal();
 	}
 
 	render(){
@@ -113,19 +118,19 @@ export class Audit extends Component {
 				<Grid container spacing={24}>
 					<Grid item xs={6} sm={6}>
 					<Paper>
-						<Button variant="contained" color="default">
+						<Button variant="contained" color="default" onClick={() => {this.launchDialog()}}>
 							<InsertDriveFileIcon/>	SOC1 Report
 						</Button>
 						<br></br> <br></br>
-						<Button variant="contained"	color="default">
+						<Button variant="contained"	color="default" onClick={() => {this.launchDialog()}}>
 						<InsertDriveFileIcon/>	Internal Audit Report
 						</Button>
 						<br></br> <br></br>
-						<Button variant="contained"	color="default">
+						<Button variant="contained"	color="default" onClick={() => {this.launchDialog()}}>
 						<InsertDriveFileIcon/>	Workstation Report
 						</Button>
 						<br></br> <br></br>
-						<Button variant="contained"	color="default">
+						<Button variant="contained"	color="default" onClick={() => {this.launchDialog()}}>
 						<InsertDriveFileIcon/>	Full System Audit
 						</Button>
 					</Paper>

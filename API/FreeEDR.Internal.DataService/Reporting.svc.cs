@@ -51,6 +51,18 @@ namespace FreeEDR.Internal.DataService
             return r;
         }
 
+        public List<String> GetReports()
+        {
+            List<String> reports = new List<String>();
+            string[] filePaths = Directory.GetFiles(@"X:\Github\FreeEDR\API\Files");
+            foreach (string x in filePaths)
+            {
+               reports.Add(x);
+            }
+            return reports;
+        }
+
+
         // get a list of all the reports generated from a given time
         public List<String> GetHistoricalReports(DateTime dt)
         {
@@ -82,7 +94,6 @@ namespace FreeEDR.Internal.DataService
                     returnList.Add(e);
                 }
             }
-
             string path = @"X:\Github\FreeEDR\API\Files\report_" + name + "_" + DateTime.Now.ToString("yyyy_dd_M_HH_mm_ss") + ".txt";
             if (!File.Exists(path))
             {
@@ -170,6 +181,29 @@ namespace FreeEDR.Internal.DataService
             // then we either determine which format we want
             if (f == FormatOption.PDF)
             {
+                // 1 - UtcTime, OriginalFileName, User
+                // 2 - UtcTime, ProcessId, Computer
+                // 3 - UtcTime, DestinationIp, ProcessId, Computer
+                // 4 - UtcTime, State, Computer
+                // 5 - UtcTime, ProcessId, Computer
+                // 6 - UtcTime, ImageLoaded, Signature, Computer
+                // 7 - UtcTime, ProcessId, Computer
+                // 8 - UtcTime, SourceImage, TargetImage, Computer
+                // 9 - UtcTime, ProcessId, Computer
+                // 10 - UtcTime, ProcessId, Computer
+                // 11 - UtcTime, ProcessId, TargetFilename
+                // 12 - UtcTime, RuleName, EventType
+                // 13 - UtcTime, RuleName, EventType
+                // 14 - UtcTime, RuleName, EventType
+                // 15 - UtcTime, TargetFileName, Image
+                // 17 - UtcTime, ProcessId, Computer
+                // 18 - UtcTime, ProcessId, Computer
+                // 19 - UtcTime, ProcessId, Computer
+                // 20 - UtcTime, ProcessId, Computer
+                // 21 - UtcTime, ProcessId, Computer
+                // 22 - UtcTime, QueryName, Image, ProcessId
+
+
                 PdfDocument pdf = new PdfDocument();
                 PdfPageBase page = pdf.Pages.Add();
                 pdf.PageSettings.Orientation = PdfPageOrientation.Landscape;
@@ -177,27 +211,364 @@ namespace FreeEDR.Internal.DataService
                 PdfStringFormat stringFormatCenter = new PdfStringFormat(PdfTextAlignment.Center, PdfVerticalAlignment.Middle);
                 PdfStringFormat stringFormatLeft = new PdfStringFormat(PdfTextAlignment.Left, PdfVerticalAlignment.Middle);
                 int nestedColumns = 0;
-                foreach (var a in returnList[0].EventData.Data)  // figure out how many columns we want to add
+
+
+                if(name == 3 || name == 6 || name == 8 || name == 22)
                 {
-                    nestedColumns++;
+                    nestedColumns = 4;
+                } else
+                {
+                    nestedColumns = 3;
                 }
 
                 grid.Columns.Add(nestedColumns);
 
                 PdfGridRow valueRow = grid.Rows.Add(); // and the values go here
+                int j = 0; // need to use this for our actual column count
                 for (int i = 0; i < returnList[0].EventData.Data.Count; i++)
                 {
                     Data a = returnList[0].EventData.Data[i]; // grab the data at the point
-                    grid.Columns[i].Width = 50f;
-                    if (a.Name != null)
+
+                    // need to check if the column name is what we want based on the name
+                    switch (name)
                     {
-                        if (a.Name.Length > 10)
-                        {
-                            a.Name = a.Name.Substring(0, 10);
-                        }
+                        case 1:
+                            if(a.Name == "UtcTime" || a.Name == "OriginalFileName" || a.Name == "User")
+                            {
+                                grid.Columns[j].Width = 250f;
+                                if (a.Name != null)
+                                {
+                                    if (a.Name.Length > 30)
+                                    {
+                                        a.Name = a.Name.Substring(0, 30);
+                                    }
+                                }
+                                valueRow.Cells[j].Value = a.Name; // sets the column names
+                                valueRow.Cells[j].StringFormat = stringFormatCenter;
+                                j++;
+                            }
+                            break;
+                        case 2:
+                            if (a.Name == "UtcTime" || a.Name == "DestinationIp" || a.Name == "User")
+                            {
+                                grid.Columns[j].Width = 250f;
+                                if (a.Name != null)
+                                {
+                                    if (a.Name.Length > 30)
+                                    {
+                                        a.Name = a.Name.Substring(0, 30);
+                                    }
+                                }
+                                valueRow.Cells[j].Value = a.Name; // sets the column names
+                                valueRow.Cells[j].StringFormat = stringFormatCenter;
+                                j++;
+                            }
+                            break;
+                        case 3:
+                            if (a.Name == "UtcTime" || a.Name == "DestinationIp" || a.Name == "ProcessId" || a.Name == "User")
+                            {
+                                grid.Columns[j].Width = 187f;
+                                if (a.Name != null)
+                                {
+                                    if (a.Name.Length > 30)
+                                    {
+                                        a.Name = a.Name.Substring(0, 30);
+                                    }
+                                }
+                                valueRow.Cells[j].Value = a.Name; // sets the column names
+                                valueRow.Cells[j].StringFormat = stringFormatCenter;
+                                j++;
+                            }
+                            break;
+                        case 4:
+                            if (a.Name == "UtcTime" || a.Name == "State" || a.Name == "User")
+                            {
+                                grid.Columns[j].Width = 250f;
+                                if (a.Name != null)
+                                {
+                                    if (a.Name.Length > 30)
+                                    {
+                                        a.Name = a.Name.Substring(0, 30);
+                                    }
+                                }
+                                valueRow.Cells[j].Value = a.Name; // sets the column names
+                                valueRow.Cells[j].StringFormat = stringFormatCenter;
+                                j++;
+                            }
+                            break;
+                        case 5:
+                            if (a.Name == "UtcTime" || a.Name == "ProcessId" || a.Name == "User")
+                            {
+                                grid.Columns[j].Width = 250f;
+                                if (a.Name != null)
+                                {
+                                    if (a.Name.Length > 30)
+                                    {
+                                        a.Name = a.Name.Substring(0, 30);
+                                    }
+                                }
+                                valueRow.Cells[j].Value = a.Name; // sets the column names
+                                valueRow.Cells[j].StringFormat = stringFormatCenter;
+                                j++;
+                            }
+                            break;
+                        case 6:
+                            if (a.Name == "UtcTime" || a.Name == "ImageLoaded" || a.Name == "Signature" || a.Name == "Computer")
+                            {
+                                grid.Columns[j].Width = 187f;
+                                if (a.Name != null)
+                                {
+                                    if (a.Name.Length > 30)
+                                    {
+                                        a.Name = a.Name.Substring(0, 30);
+                                    }
+                                }
+                                valueRow.Cells[j].Value = a.Name; // sets the column names
+                                valueRow.Cells[j].StringFormat = stringFormatCenter;
+                                j++;
+                            }
+                            break;
+                        case 7:
+                            if (a.Name == "UtcTime" || a.Name == "ProcessId" || a.Name == "User")
+                            {
+                                grid.Columns[j].Width = 250f;
+                                if (a.Name != null)
+                                {
+                                    if (a.Name.Length > 30)
+                                    {
+                                        a.Name = a.Name.Substring(0, 30);
+                                    }
+                                }
+                                valueRow.Cells[j].Value = a.Name; // sets the column names
+                                valueRow.Cells[j].StringFormat = stringFormatCenter;
+                                j++;
+                            }
+                            break;
+                        case 8:
+                            if (a.Name == "UtcTime" || a.Name == "SourceImage" || a.Name == "TargetImage" || a.Name == "User")
+                            {
+                                grid.Columns[j].Width = 187f;
+                                if (a.Name != null)
+                                {
+                                    if (a.Name.Length > 30)
+                                    {
+                                        a.Name = a.Name.Substring(0, 30);
+                                    }
+                                }
+                                valueRow.Cells[j].Value = a.Name; // sets the column names
+                                valueRow.Cells[j].StringFormat = stringFormatCenter;
+                                j++;
+                            }
+                            break;
+                        case 9:
+                            if (a.Name == "UtcTime" || a.Name == "ProcessId" || a.Name == "User")
+                            {
+                                grid.Columns[j].Width = 250f;
+                                if (a.Name != null)
+                                {
+                                    if (a.Name.Length > 30)
+                                    {
+                                        a.Name = a.Name.Substring(0, 30);
+                                    }
+                                }
+                                valueRow.Cells[j].Value = a.Name; // sets the column names
+                                valueRow.Cells[j].StringFormat = stringFormatCenter;
+                                j++;
+                            }
+                            break;
+                        case 10:
+                            if (a.Name == "UtcTime" || a.Name == "ProcessId" || a.Name == "User")
+                            {
+                                grid.Columns[j].Width = 250f;
+                                if (a.Name != null)
+                                {
+                                    if (a.Name.Length > 30)
+                                    {
+                                        a.Name = a.Name.Substring(0, 30);
+                                    }
+                                }
+                                valueRow.Cells[j].Value = a.Name; // sets the column names
+                                valueRow.Cells[j].StringFormat = stringFormatCenter;
+                                j++;
+                            }
+                            break;
+                        case 11:
+                            if (a.Name == "UtcTime" || a.Name == "ProcessId" || a.Name == "TargetFilename")
+                            {
+                                grid.Columns[j].Width = 250f;
+                                if (a.Name != null)
+                                {
+                                    if (a.Name.Length > 30)
+                                    {
+                                        a.Name = a.Name.Substring(0, 30);
+                                    }
+                                }
+                                valueRow.Cells[j].Value = a.Name; // sets the column names
+                                valueRow.Cells[j].StringFormat = stringFormatCenter;
+                                j++;
+                            }
+                            break;
+                        case 12:
+                            if (a.Name == "UtcTime" || a.Name == "RuleName" || a.Name == "EventType")
+                            {
+                                grid.Columns[j].Width = 250f;
+                                if (a.Name != null)
+                                {
+                                    if (a.Name.Length > 30)
+                                    {
+                                        a.Name = a.Name.Substring(0, 30);
+                                    }
+                                }
+                                valueRow.Cells[j].Value = a.Name; // sets the column names
+                                valueRow.Cells[j].StringFormat = stringFormatCenter;
+                                j++;
+                            }
+                            break;
+                        case 13:
+                            if (a.Name == "UtcTime" || a.Name == "RuleName" || a.Name == "EventType")
+                            {
+                                grid.Columns[j].Width = 250f;
+                                if (a.Name != null)
+                                {
+                                    if (a.Name.Length > 30)
+                                    {
+                                        a.Name = a.Name.Substring(0, 30);
+                                    }
+                                }
+                                valueRow.Cells[j].Value = a.Name; // sets the column names
+                                valueRow.Cells[j].StringFormat = stringFormatCenter;
+                                j++;
+                            }
+                            break;
+                        case 14:
+                            if (a.Name == "UtcTime" || a.Name == "RuleName" || a.Name == "EventType")
+                            {
+                                grid.Columns[j].Width = 250f;
+                                if (a.Name != null)
+                                {
+                                    if (a.Name.Length > 30)
+                                    {
+                                        a.Name = a.Name.Substring(0, 30);
+                                    }
+                                }
+                                valueRow.Cells[j].Value = a.Name; // sets the column names
+                                valueRow.Cells[j].StringFormat = stringFormatCenter;
+                                j++;
+                            }
+                            break;
+                        case 15:
+                            if (a.Name == "UtcTime" || a.Name == "TargetFileName" || a.Name == "Image")
+                            {
+                                grid.Columns[j].Width = 250f;
+                                if (a.Name != null)
+                                {
+                                    if (a.Name.Length > 30)
+                                    {
+                                        a.Name = a.Name.Substring(0, 30);
+                                    }
+                                }
+                                valueRow.Cells[j].Value = a.Name; // sets the column names
+                                valueRow.Cells[j].StringFormat = stringFormatCenter;
+                                j++;
+                            }
+                            break;
+                        case 17:
+                            if (a.Name == "UtcTime" || a.Name == "ProcessId" || a.Name == "User")
+                            {
+                                grid.Columns[j].Width = 250f;
+                                if (a.Name != null)
+                                {
+                                    if (a.Name.Length > 30)
+                                    {
+                                        a.Name = a.Name.Substring(0, 30);
+                                    }
+                                }
+                                valueRow.Cells[j].Value = a.Name; // sets the column names
+                                valueRow.Cells[j].StringFormat = stringFormatCenter;
+                                j++;
+                            }
+                            break;
+                        case 18:
+                            if (a.Name == "UtcTime" || a.Name == "ProcessId" || a.Name == "User")
+                            {
+                                grid.Columns[j].Width = 250f;
+                                if (a.Name != null)
+                                {
+                                    if (a.Name.Length > 30)
+                                    {
+                                        a.Name = a.Name.Substring(0, 30);
+                                    }
+                                }
+                                valueRow.Cells[j].Value = a.Name; // sets the column names
+                                valueRow.Cells[j].StringFormat = stringFormatCenter;
+                                j++;
+                            }
+                            break;
+                        case 19:
+                            if (a.Name == "UtcTime" || a.Name == "ProcessId" || a.Name == "User")
+                            {
+                                grid.Columns[j].Width = 250f;
+                                if (a.Name != null)
+                                {
+                                    if (a.Name.Length > 30)
+                                    {
+                                        a.Name = a.Name.Substring(0, 30);
+                                    }
+                                }
+                                valueRow.Cells[j].Value = a.Name; // sets the column names
+                                valueRow.Cells[j].StringFormat = stringFormatCenter;
+                                j++;
+                            }
+                            break;
+                        case 20:
+                            if (a.Name == "UtcTime" || a.Name == "ProcessId" || a.Name == "User")
+                            {
+                                grid.Columns[j].Width = 250f;
+                                if (a.Name != null)
+                                {
+                                    if (a.Name.Length > 30)
+                                    {
+                                        a.Name = a.Name.Substring(0, 30);
+                                    }
+                                }
+                                valueRow.Cells[j].Value = a.Name; // sets the column names
+                                valueRow.Cells[j].StringFormat = stringFormatCenter;
+                                j++;
+                            }
+                            break;
+                        case 21:
+                            if (a.Name == "UtcTime" || a.Name == "ProcessId" || a.Name == "User")
+                            {
+                                grid.Columns[j].Width = 250f;
+                                if (a.Name != null)
+                                {
+                                    if (a.Name.Length > 30)
+                                    {
+                                        a.Name = a.Name.Substring(0, 30);
+                                    }
+                                }
+                                valueRow.Cells[j].Value = a.Name; // sets the column names
+                                valueRow.Cells[j].StringFormat = stringFormatCenter;
+                                j++;
+                            }
+                            break;
+                        case 22:
+                            if (a.Name == "UtcTime" || a.Name == "QueryName" || a.Name == "Image" || a.Name == "ProcessId")
+                            {
+                                grid.Columns[j].Width = 187f;
+                                if (a.Name != null)
+                                {
+                                    if (a.Name.Length > 30)
+                                    {
+                                        a.Name = a.Name.Substring(0, 30);
+                                    }
+                                }
+                                valueRow.Cells[j].Value = a.Name; // sets the column names
+                                valueRow.Cells[j].StringFormat = stringFormatCenter;
+                                j++;
+                            }
+                            break;
                     }
-                    valueRow.Cells[i].Value = a.Name; // sets the column names
-                    valueRow.Cells[i].StringFormat = stringFormatCenter;
                 }
 
                 foreach (Event e in returnList)
@@ -206,150 +577,346 @@ namespace FreeEDR.Internal.DataService
                     int columnPointer = 0;
                     foreach (var a in e.EventData.Data) // so for each event data, add it to the column then
                     {
-                        if (a.Text != null)
+                        // need to check if the column name is what we want based on the name
+                        switch (name)
                         {
-                            if (a.Text.Length > 10)
-                            {
-                                a.Text = a.Text.Substring(0, 10);
-                            }
-                        }
-                        nameRow.Cells[columnPointer].Value = a.Text;
-                        nameRow.Cells[columnPointer].StringFormat = stringFormatLeft;
-                        columnPointer++;
-                    }
-                }
-                grid.Draw(page, 0, 600);
-                pdf.Pages.RemoveAt(0); // remove the first blank page
-                pdf.SaveToFile(@"X:\Github\FreeEDR\API\Files\report_" + name + "_" + DateTime.Now.ToString("yyyy_dd_M_HH_mm_ss") + ".pdf");
-            }
-            else if (f == FormatOption.CSV)
-            {
-
-                string CSVpath = @"X:\Github\FreeEDR\API\Files\report_" + name + "_" + DateTime.Now.ToString("yyyy_dd_M_HH_mm_ss") + ".csv";
-                if (!File.Exists(CSVpath))
-                {
-                    // Create a file to write to.
-                    using (StreamWriter sw = File.CreateText(CSVpath))
-                    {
-
-                        // first we need to get the a.Name's first
-                        Event e0 = returnList[0];
-                        for (int i = 0; i < e0.EventData.Data.Count; i++)
-                        {
-                            Data a = e0.EventData.Data[i]; // grab the data at the point
-                            if (i + 1 == e0.EventData.Data.Count)
-                            {
-                                sw.Write(a.Name);
-                            }
-                            else
-                            {
-                                sw.Write(a.Name + ",");
-                            }
-                        }
-                        sw.WriteLine("");
-                        foreach (Event e in returnList)
-                        {
-                            for (int i = 0; i < e.EventData.Data.Count; i++)
-                            {
-                                Data a = e.EventData.Data[i]; // grab the data at the point
-                                if (i + 1 == e.EventData.Data.Count)
+                            case 1:
+                                if (a.Name == "UtcTime" || a.Name == "OriginalFileName" || a.Name == "User")
                                 {
-                                    sw.Write(a.Text);
+                                    grid.Columns[columnPointer].Width = 250f;
+                                    if (a.Text != null)
+                                    {
+                                        if (a.Text.Length > 30)
+                                        {
+                                            a.Text = a.Text.Substring(0, 30);
+                                        }
+                                    }
+                                    nameRow.Cells[columnPointer].Value = a.Text;
+                                    nameRow.Cells[columnPointer].StringFormat = stringFormatLeft;
+                                    columnPointer++;
                                 }
-                                else
+                                break;
+                            case 2:
+                                if (a.Name == "UtcTime" || a.Name == "DestinationIp" || a.Name == "User")
                                 {
-                                    sw.Write(a.Text + ",");
+                                    grid.Columns[columnPointer].Width = 250f;
+                                    if (a.Text != null)
+                                    {
+                                        if (a.Text.Length > 30)
+                                        {
+                                            a.Text = a.Text.Substring(0, 30);
+                                        }
+                                    }
+                                    nameRow.Cells[columnPointer].Value = a.Text;
+                                    nameRow.Cells[columnPointer].StringFormat = stringFormatLeft;
+                                    columnPointer++;
                                 }
-                            }
-                            sw.WriteLine("");
+                                break;
+                            case 3:
+                                if (a.Name == "UtcTime" || a.Name == "DestinationIp" || a.Name == "ProcessId" || a.Name == "User")
+                                {
+                                    grid.Columns[columnPointer].Width = 187f;
+                                    if (a.Text != null)
+                                    {
+                                        if (a.Text.Length > 30)
+                                        {
+                                            a.Text = a.Text.Substring(0, 30);
+                                        }
+                                    }
+                                    nameRow.Cells[columnPointer].Value = a.Text;
+                                    nameRow.Cells[columnPointer].StringFormat = stringFormatLeft;
+                                    columnPointer++;
+                                }
+                                break;
+                            case 4:
+                                if (a.Name == "UtcTime" || a.Name == "State" || a.Name == "User")
+                                {
+                                    grid.Columns[columnPointer].Width = 250f;
+                                    if (a.Text != null)
+                                    {
+                                        if (a.Text.Length > 30)
+                                        {
+                                            a.Text = a.Text.Substring(0, 30);
+                                        }
+                                    }
+                                    nameRow.Cells[columnPointer].Value = a.Text;
+                                    nameRow.Cells[columnPointer].StringFormat = stringFormatLeft;
+                                    columnPointer++;
+                                }
+                                break;
+                            case 5:
+                                if (a.Name == "UtcTime" || a.Name == "ProcessId" || a.Name == "User")
+                                {
+                                    grid.Columns[columnPointer].Width = 250f;
+                                    if (a.Text != null)
+                                    {
+                                        if (a.Text.Length > 30)
+                                        {
+                                            a.Text = a.Text.Substring(0, 30);
+                                        }
+                                    }
+                                    nameRow.Cells[columnPointer].Value = a.Text;
+                                    nameRow.Cells[columnPointer].StringFormat = stringFormatLeft;
+                                    columnPointer++;
+                                }
+                                break;
+                            case 6:
+                                if (a.Name == "UtcTime" || a.Name == "ImageLoaded" || a.Name == "Signature" || a.Name == "Computer")
+                                {
+                                    grid.Columns[columnPointer].Width = 187f;
+                                    if (a.Text != null)
+                                    {
+                                        if (a.Text.Length > 30)
+                                        {
+                                            a.Text = a.Text.Substring(0, 30);
+                                        }
+                                    }
+                                    nameRow.Cells[columnPointer].Value = a.Text;
+                                    nameRow.Cells[columnPointer].StringFormat = stringFormatLeft;
+                                    columnPointer++;
+                                }
+                                break;
+                            case 7:
+                                if (a.Name == "UtcTime" || a.Name == "ProcessId" || a.Name == "User")
+                                {
+                                    grid.Columns[columnPointer].Width = 250f;
+                                    if (a.Text != null)
+                                    {
+                                        if (a.Text.Length > 30)
+                                        {
+                                            a.Text = a.Text.Substring(0, 30);
+                                        }
+                                    }
+                                    nameRow.Cells[columnPointer].Value = a.Text;
+                                    nameRow.Cells[columnPointer].StringFormat = stringFormatLeft;
+                                    columnPointer++;
+                                }
+                                break;
+                            case 8:
+                                if (a.Name == "UtcTime" || a.Name == "SourceImage" || a.Name == "TargetImage" || a.Name == "User")
+                                {
+                                    grid.Columns[columnPointer].Width = 187f;
+                                    if (a.Text != null)
+                                    {
+                                        if (a.Text.Length > 30)
+                                        {
+                                            a.Text = a.Text.Substring(0, 30);
+                                        }
+                                    }
+                                    nameRow.Cells[columnPointer].Value = a.Text;
+                                    nameRow.Cells[columnPointer].StringFormat = stringFormatLeft;
+                                    columnPointer++;
+                                }
+                                break;
+                            case 9:
+                                if (a.Name == "UtcTime" || a.Name == "ProcessId" || a.Name == "User")
+                                {
+                                    grid.Columns[columnPointer].Width = 250f;
+                                    if (a.Text != null)
+                                    {
+                                        if (a.Text.Length > 30)
+                                        {
+                                            a.Text = a.Text.Substring(0, 30);
+                                        }
+                                    }
+                                    nameRow.Cells[columnPointer].Value = a.Text;
+                                    nameRow.Cells[columnPointer].StringFormat = stringFormatLeft;
+                                    columnPointer++;
+                                }
+                                break;
+                            case 10:
+                                if (a.Name == "UtcTime" || a.Name == "ProcessId" || a.Name == "User")
+                                {
+                                    grid.Columns[columnPointer].Width = 250f;
+                                    if (a.Text != null)
+                                    {
+                                        if (a.Text.Length > 30)
+                                        {
+                                            a.Text = a.Text.Substring(0, 30);
+                                        }
+                                    }
+                                    nameRow.Cells[columnPointer].Value = a.Text;
+                                    nameRow.Cells[columnPointer].StringFormat = stringFormatLeft;
+                                    columnPointer++;
+                                }
+                                break;
+                            case 11:
+                                if (a.Name == "UtcTime" || a.Name == "ProcessId" || a.Name == "TargetFilename")
+                                {
+                                    grid.Columns[columnPointer].Width = 250f;
+                                    if (a.Text != null)
+                                    {
+                                        if (a.Text.Length > 30)
+                                        {
+                                            a.Text = a.Text.Substring(0, 30);
+                                        }
+                                    }
+                                    nameRow.Cells[columnPointer].Value = a.Text;
+                                    nameRow.Cells[columnPointer].StringFormat = stringFormatLeft;
+                                    columnPointer++;
+                                }
+                                break;
+                            case 12:
+                                if (a.Name == "UtcTime" || a.Name == "RuleName" || a.Name == "EventType")
+                                {
+                                    grid.Columns[columnPointer].Width = 250f;
+                                    if (a.Text != null)
+                                    {
+                                        if (a.Text.Length > 30)
+                                        {
+                                            a.Text = a.Text.Substring(0, 30);
+                                        }
+                                    }
+                                    nameRow.Cells[columnPointer].Value = a.Text;
+                                    nameRow.Cells[columnPointer].StringFormat = stringFormatLeft;
+                                    columnPointer++;
+                                }
+                                break;
+                            case 13:
+                                if (a.Name == "UtcTime" || a.Name == "RuleName" || a.Name == "EventType")
+                                {
+                                    grid.Columns[columnPointer].Width = 250f;
+                                    if (a.Text != null)
+                                    {
+                                        if (a.Text.Length > 30)
+                                        {
+                                            a.Text = a.Text.Substring(0, 30);
+                                        }
+                                    }
+                                    nameRow.Cells[columnPointer].Value = a.Text;
+                                    nameRow.Cells[columnPointer].StringFormat = stringFormatLeft;
+                                    columnPointer++;
+                                }
+                                break;
+                            case 14:
+                                if (a.Name == "UtcTime" || a.Name == "RuleName" || a.Name == "EventType")
+                                {
+                                    grid.Columns[columnPointer].Width = 250f;
+                                    if (a.Text != null)
+                                    {
+                                        if (a.Text.Length > 30)
+                                        {
+                                            a.Text = a.Text.Substring(0, 30);
+                                        }
+                                    }
+                                    nameRow.Cells[columnPointer].Value = a.Text;
+                                    nameRow.Cells[columnPointer].StringFormat = stringFormatLeft;
+                                    columnPointer++;
+                                }
+                                break;
+                            case 15:
+                                if (a.Name == "UtcTime" || a.Name == "TargetFileName" || a.Name == "Image")
+                                {
+                                    grid.Columns[columnPointer].Width = 250f;
+                                    if (a.Text != null)
+                                    {
+                                        if (a.Text.Length > 30)
+                                        {
+                                            a.Text = a.Text.Substring(0, 30);
+                                        }
+                                    }
+                                    nameRow.Cells[columnPointer].Value = a.Text;
+                                    nameRow.Cells[columnPointer].StringFormat = stringFormatLeft;
+                                    columnPointer++;
+                                }
+                                break;
+                            case 17:
+                                if (a.Name == "UtcTime" || a.Name == "ProcessId" || a.Name == "User")
+                                {
+                                    grid.Columns[columnPointer].Width = 250f;
+                                    if (a.Text != null)
+                                    {
+                                        if (a.Text.Length > 30)
+                                        {
+                                            a.Text = a.Text.Substring(0, 30);
+                                        }
+                                    }
+                                    nameRow.Cells[columnPointer].Value = a.Text;
+                                    nameRow.Cells[columnPointer].StringFormat = stringFormatLeft;
+                                    columnPointer++;
+                                }
+                                break;
+                            case 18:
+                                if (a.Name == "UtcTime" || a.Name == "ProcessId" || a.Name == "User")
+                                {
+                                    grid.Columns[columnPointer].Width = 250f;
+                                    if (a.Text != null)
+                                    {
+                                        if (a.Text.Length > 30)
+                                        {
+                                            a.Text = a.Text.Substring(0, 30);
+                                        }
+                                    }
+                                    nameRow.Cells[columnPointer].Value = a.Text;
+                                    nameRow.Cells[columnPointer].StringFormat = stringFormatLeft;
+                                    columnPointer++;
+                                }
+                                break;
+                            case 19:
+                                if (a.Name == "UtcTime" || a.Name == "ProcessId" || a.Name == "User")
+                                {
+                                    grid.Columns[columnPointer].Width = 250f;
+                                    if (a.Text != null)
+                                    {
+                                        if (a.Text.Length > 30)
+                                        {
+                                            a.Text = a.Text.Substring(0, 30);
+                                        }
+                                    }
+                                    nameRow.Cells[columnPointer].Value = a.Text;
+                                    nameRow.Cells[columnPointer].StringFormat = stringFormatLeft;
+                                    columnPointer++;
+                                }
+                                break;
+                            case 20:
+                                if (a.Name == "UtcTime" || a.Name == "ProcessId" || a.Name == "User")
+                                {
+                                    grid.Columns[columnPointer].Width = 250f;
+                                    if (a.Text != null)
+                                    {
+                                        if (a.Text.Length > 30)
+                                        {
+                                            a.Text = a.Text.Substring(0, 30);
+                                        }
+                                    }
+                                    nameRow.Cells[columnPointer].Value = a.Text;
+                                    nameRow.Cells[columnPointer].StringFormat = stringFormatLeft;
+                                    columnPointer++;
+                                }
+                                break;
+                            case 21:
+                                if (a.Name == "UtcTime" || a.Name == "ProcessId" || a.Name == "User")
+                                {
+                                    grid.Columns[columnPointer].Width = 250f;
+                                    if (a.Text != null)
+                                    {
+                                        if (a.Text.Length > 30)
+                                        {
+                                            a.Text = a.Text.Substring(0, 30);
+                                        }
+                                    }
+                                    nameRow.Cells[columnPointer].Value = a.Text;
+                                    nameRow.Cells[columnPointer].StringFormat = stringFormatLeft;
+                                    columnPointer++;
+                                }
+                                break;
+                            case 22:
+                                if (a.Name == "UtcTime" || a.Name == "QueryName" || a.Name == "Image" || a.Name == "ProcessId")
+                                {
+                                    grid.Columns[columnPointer].Width = 187f;
+                                    if (a.Text != null)
+                                    {
+                                        if (a.Text.Length > 30)
+                                        {
+                                            a.Text = a.Text.Substring(0, 30);
+                                        }
+                                    }
+                                    nameRow.Cells[columnPointer].Value = a.Text;
+                                    nameRow.Cells[columnPointer].StringFormat = stringFormatLeft;
+                                    columnPointer++;
+                                }
+                                break;
                         }
-                    }
-                }
-            } else if (f == FormatOption.TXT)
-            {
-                string path = @"X:\Github\FreeEDR\API\Files\report_" + name + "_" + DateTime.Now.ToString("yyyy_dd_M_HH_mm_ss") + ".txt";
-                if (!File.Exists(path))
-                {
-                    // Create a file to write to.
-                    using (StreamWriter sw = File.CreateText(path))
-                    {
-                        foreach (Event e in returnList)
-                        {
-                            foreach (var a in e.EventData.Data)
-                            {
-                                sw.Write(a.Name + " " + a.Text + "|");
-                            }
-                            sw.WriteLine("");
-                        }
-                    }
-                }
-            }
-            return returnList;
-        }
-
-        // return a list of events with a different format
-        public List<Event> GetReportFormat(int name, FormatOption f)
-        {
-            Events r = getLocalEvents();
-            Console.WriteLine(r);
-            List<Event> returnList = new List<Event>();
-            foreach (Event e in r.Event)
-            {
-                if (e.System.EventID == name.ToString())
-                {
-                    returnList.Add(e);
-                }
-            }
-
-            // then we either determine which format we want
-            if (f == FormatOption.PDF)
-            {
-                PdfDocument pdf = new PdfDocument();
-                PdfPageBase page = pdf.Pages.Add();
-                pdf.PageSettings.Orientation = PdfPageOrientation.Landscape;
-                PdfGrid grid = new PdfGrid();
-                PdfStringFormat stringFormatCenter = new PdfStringFormat(PdfTextAlignment.Center, PdfVerticalAlignment.Middle);
-                PdfStringFormat stringFormatLeft = new PdfStringFormat(PdfTextAlignment.Left, PdfVerticalAlignment.Middle);
-                int nestedColumns = 0;
-                foreach (var a in returnList[0].EventData.Data)  // figure out how many columns we want to add
-                {
-                    nestedColumns++;
-                }
-
-                grid.Columns.Add(nestedColumns);
-
-                PdfGridRow valueRow = grid.Rows.Add(); // and the values go here
-                for (int i = 0; i < returnList[0].EventData.Data.Count; i++)
-                {
-                    Data a = returnList[0].EventData.Data[i]; // grab the data at the point
-                    grid.Columns[i].Width = 50f;
-                    if (a.Name != null)
-                    {
-                        if (a.Name.Length > 10)
-                        {
-                            a.Name = a.Name.Substring(0, 10);
-                        }
-                    }
-                    valueRow.Cells[i].Value = a.Name; // sets the column names
-                    valueRow.Cells[i].StringFormat = stringFormatCenter;
-                }
-
-                foreach (Event e in returnList)
-                {
-                    PdfGridRow nameRow = grid.Rows.Add(); // each embed event has a name
-                    int columnPointer = 0;
-                    foreach (var a in e.EventData.Data) // so for each event data, add it to the column then
-                    {
-                        if (a.Text != null)
-                        {
-                            if (a.Text.Length > 10)
-                            {
-                                a.Text = a.Text.Substring(0, 10);
-                            }
-                        }
-                        nameRow.Cells[columnPointer].Value = a.Text;
-                        nameRow.Cells[columnPointer].StringFormat = stringFormatLeft;
-                        columnPointer++;
                     }
                 }
                 grid.Draw(page, 0, 600);
@@ -419,8 +986,817 @@ namespace FreeEDR.Internal.DataService
                     }
                 }
             }
-
             return returnList;
+        }
+
+        // return a list of events with a different format
+        public string GetReportFormat(int name, FormatOption f)
+        {
+            Events r = getLocalEvents();
+            Console.WriteLine(r);
+            List<Event> returnList = new List<Event>();
+            foreach (Event e in r.Event)
+            {
+                if (e.System.EventID == name.ToString())
+                {
+                    returnList.Add(e);
+                }
+            }
+            string path = "";
+            // then we either determine which format we want
+            if (f == FormatOption.PDF)
+            {
+                PdfDocument pdf = new PdfDocument();
+                PdfPageBase page = pdf.Pages.Add();
+                pdf.PageSettings.Orientation = PdfPageOrientation.Landscape;
+                PdfGrid grid = new PdfGrid();
+                PdfStringFormat stringFormatCenter = new PdfStringFormat(PdfTextAlignment.Center, PdfVerticalAlignment.Middle);
+                PdfStringFormat stringFormatLeft = new PdfStringFormat(PdfTextAlignment.Left, PdfVerticalAlignment.Middle);
+                int nestedColumns = 0;
+
+
+                if (name == 3 || name == 6 || name == 8 || name == 22)
+                {
+                    nestedColumns = 4;
+                }
+                else
+                {
+                    nestedColumns = 3;
+                }
+
+                grid.Columns.Add(nestedColumns);
+
+                PdfGridRow valueRow = grid.Rows.Add(); // and the values go here
+                int j = 0; // need to use this for our actual column count
+                if(returnList == null)
+                {
+                    return "";
+                }
+
+                for (int i = 0; i < returnList[0].EventData.Data.Count; i++)
+                {
+                    Data a = returnList[0].EventData.Data[i]; // grab the data at the point
+
+                    // need to check if the column name is what we want based on the name
+                    switch (name)
+                    {
+                        case 1:
+                            if (a.Name == "UtcTime" || a.Name == "OriginalFileName" || a.Name == "User")
+                            {
+                                grid.Columns[j].Width = 250f;
+                                if (a.Name != null)
+                                {
+                                    if (a.Name.Length > 30)
+                                    {
+                                        a.Name = a.Name.Substring(0, 30);
+                                    }
+                                }
+                                valueRow.Cells[j].Value = a.Name; // sets the column names
+                                valueRow.Cells[j].StringFormat = stringFormatCenter;
+                                j++;
+                            }
+                            break;
+                        case 2:
+                            if (a.Name == "UtcTime" || a.Name == "DestinationIp" || a.Name == "User")
+                            {
+                                grid.Columns[j].Width = 250f;
+                                if (a.Name != null)
+                                {
+                                    if (a.Name.Length > 30)
+                                    {
+                                        a.Name = a.Name.Substring(0, 30);
+                                    }
+                                }
+                                valueRow.Cells[j].Value = a.Name; // sets the column names
+                                valueRow.Cells[j].StringFormat = stringFormatCenter;
+                                j++;
+                            }
+                            break;
+                        case 3:
+                            if (a.Name == "UtcTime" || a.Name == "DestinationIp" || a.Name == "ProcessId" || a.Name == "User")
+                            {
+                                grid.Columns[j].Width = 187f;
+                                if (a.Name != null)
+                                {
+                                    if (a.Name.Length > 30)
+                                    {
+                                        a.Name = a.Name.Substring(0, 30);
+                                    }
+                                }
+                                valueRow.Cells[j].Value = a.Name; // sets the column names
+                                valueRow.Cells[j].StringFormat = stringFormatCenter;
+                                j++;
+                            }
+                            break;
+                        case 4:
+                            if (a.Name == "UtcTime" || a.Name == "State" || a.Name == "User")
+                            {
+                                grid.Columns[j].Width = 250f;
+                                if (a.Name != null)
+                                {
+                                    if (a.Name.Length > 30)
+                                    {
+                                        a.Name = a.Name.Substring(0, 30);
+                                    }
+                                }
+                                valueRow.Cells[j].Value = a.Name; // sets the column names
+                                valueRow.Cells[j].StringFormat = stringFormatCenter;
+                                j++;
+                            }
+                            break;
+                        case 5:
+                            if (a.Name == "UtcTime" || a.Name == "ProcessId" || a.Name == "User")
+                            {
+                                grid.Columns[j].Width = 250f;
+                                if (a.Name != null)
+                                {
+                                    if (a.Name.Length > 30)
+                                    {
+                                        a.Name = a.Name.Substring(0, 30);
+                                    }
+                                }
+                                valueRow.Cells[j].Value = a.Name; // sets the column names
+                                valueRow.Cells[j].StringFormat = stringFormatCenter;
+                                j++;
+                            }
+                            break;
+                        case 6:
+                            if (a.Name == "UtcTime" || a.Name == "ImageLoaded" || a.Name == "Signature" || a.Name == "Computer")
+                            {
+                                grid.Columns[j].Width = 187f;
+                                if (a.Name != null)
+                                {
+                                    if (a.Name.Length > 30)
+                                    {
+                                        a.Name = a.Name.Substring(0, 30);
+                                    }
+                                }
+                                valueRow.Cells[j].Value = a.Name; // sets the column names
+                                valueRow.Cells[j].StringFormat = stringFormatCenter;
+                                j++;
+                            }
+                            break;
+                        case 7:
+                            if (a.Name == "UtcTime" || a.Name == "ProcessId" || a.Name == "User")
+                            {
+                                grid.Columns[j].Width = 250f;
+                                if (a.Name != null)
+                                {
+                                    if (a.Name.Length > 30)
+                                    {
+                                        a.Name = a.Name.Substring(0, 30);
+                                    }
+                                }
+                                valueRow.Cells[j].Value = a.Name; // sets the column names
+                                valueRow.Cells[j].StringFormat = stringFormatCenter;
+                                j++;
+                            }
+                            break;
+                        case 8:
+                            if (a.Name == "UtcTime" || a.Name == "SourceImage" || a.Name == "TargetImage" || a.Name == "User")
+                            {
+                                grid.Columns[j].Width = 187f;
+                                if (a.Name != null)
+                                {
+                                    if (a.Name.Length > 30)
+                                    {
+                                        a.Name = a.Name.Substring(0, 30);
+                                    }
+                                }
+                                valueRow.Cells[j].Value = a.Name; // sets the column names
+                                valueRow.Cells[j].StringFormat = stringFormatCenter;
+                                j++;
+                            }
+                            break;
+                        case 9:
+                            if (a.Name == "UtcTime" || a.Name == "ProcessId" || a.Name == "User")
+                            {
+                                grid.Columns[j].Width = 250f;
+                                if (a.Name != null)
+                                {
+                                    if (a.Name.Length > 30)
+                                    {
+                                        a.Name = a.Name.Substring(0, 30);
+                                    }
+                                }
+                                valueRow.Cells[j].Value = a.Name; // sets the column names
+                                valueRow.Cells[j].StringFormat = stringFormatCenter;
+                                j++;
+                            }
+                            break;
+                        case 10:
+                            if (a.Name == "UtcTime" || a.Name == "ProcessId" || a.Name == "User")
+                            {
+                                grid.Columns[j].Width = 250f;
+                                if (a.Name != null)
+                                {
+                                    if (a.Name.Length > 30)
+                                    {
+                                        a.Name = a.Name.Substring(0, 30);
+                                    }
+                                }
+                                valueRow.Cells[j].Value = a.Name; // sets the column names
+                                valueRow.Cells[j].StringFormat = stringFormatCenter;
+                                j++;
+                            }
+                            break;
+                        case 11:
+                            if (a.Name == "UtcTime" || a.Name == "ProcessId" || a.Name == "TargetFilename")
+                            {
+                                grid.Columns[j].Width = 250f;
+                                if (a.Name != null)
+                                {
+                                    if (a.Name.Length > 30)
+                                    {
+                                        a.Name = a.Name.Substring(0, 30);
+                                    }
+                                }
+                                valueRow.Cells[j].Value = a.Name; // sets the column names
+                                valueRow.Cells[j].StringFormat = stringFormatCenter;
+                                j++;
+                            }
+                            break;
+                        case 12:
+                            if (a.Name == "UtcTime" || a.Name == "RuleName" || a.Name == "EventType")
+                            {
+                                grid.Columns[j].Width = 250f;
+                                if (a.Name != null)
+                                {
+                                    if (a.Name.Length > 30)
+                                    {
+                                        a.Name = a.Name.Substring(0, 30);
+                                    }
+                                }
+                                valueRow.Cells[j].Value = a.Name; // sets the column names
+                                valueRow.Cells[j].StringFormat = stringFormatCenter;
+                                j++;
+                            }
+                            break;
+                        case 13:
+                            if (a.Name == "UtcTime" || a.Name == "RuleName" || a.Name == "EventType")
+                            {
+                                grid.Columns[j].Width = 250f;
+                                if (a.Name != null)
+                                {
+                                    if (a.Name.Length > 30)
+                                    {
+                                        a.Name = a.Name.Substring(0, 30);
+                                    }
+                                }
+                                valueRow.Cells[j].Value = a.Name; // sets the column names
+                                valueRow.Cells[j].StringFormat = stringFormatCenter;
+                                j++;
+                            }
+                            break;
+                        case 14:
+                            if (a.Name == "UtcTime" || a.Name == "RuleName" || a.Name == "EventType")
+                            {
+                                grid.Columns[j].Width = 250f;
+                                if (a.Name != null)
+                                {
+                                    if (a.Name.Length > 30)
+                                    {
+                                        a.Name = a.Name.Substring(0, 30);
+                                    }
+                                }
+                                valueRow.Cells[j].Value = a.Name; // sets the column names
+                                valueRow.Cells[j].StringFormat = stringFormatCenter;
+                                j++;
+                            }
+                            break;
+                        case 15:
+                            if (a.Name == "UtcTime" || a.Name == "TargetFileName" || a.Name == "Image")
+                            {
+                                grid.Columns[j].Width = 250f;
+                                if (a.Name != null)
+                                {
+                                    if (a.Name.Length > 30)
+                                    {
+                                        a.Name = a.Name.Substring(0, 30);
+                                    }
+                                }
+                                valueRow.Cells[j].Value = a.Name; // sets the column names
+                                valueRow.Cells[j].StringFormat = stringFormatCenter;
+                                j++;
+                            }
+                            break;
+                        case 17:
+                            if (a.Name == "UtcTime" || a.Name == "ProcessId" || a.Name == "User")
+                            {
+                                grid.Columns[j].Width = 250f;
+                                if (a.Name != null)
+                                {
+                                    if (a.Name.Length > 30)
+                                    {
+                                        a.Name = a.Name.Substring(0, 30);
+                                    }
+                                }
+                                valueRow.Cells[j].Value = a.Name; // sets the column names
+                                valueRow.Cells[j].StringFormat = stringFormatCenter;
+                                j++;
+                            }
+                            break;
+                        case 18:
+                            if (a.Name == "UtcTime" || a.Name == "ProcessId" || a.Name == "User")
+                            {
+                                grid.Columns[j].Width = 250f;
+                                if (a.Name != null)
+                                {
+                                    if (a.Name.Length > 30)
+                                    {
+                                        a.Name = a.Name.Substring(0, 30);
+                                    }
+                                }
+                                valueRow.Cells[j].Value = a.Name; // sets the column names
+                                valueRow.Cells[j].StringFormat = stringFormatCenter;
+                                j++;
+                            }
+                            break;
+                        case 19:
+                            if (a.Name == "UtcTime" || a.Name == "ProcessId" || a.Name == "User")
+                            {
+                                grid.Columns[j].Width = 250f;
+                                if (a.Name != null)
+                                {
+                                    if (a.Name.Length > 30)
+                                    {
+                                        a.Name = a.Name.Substring(0, 30);
+                                    }
+                                }
+                                valueRow.Cells[j].Value = a.Name; // sets the column names
+                                valueRow.Cells[j].StringFormat = stringFormatCenter;
+                                j++;
+                            }
+                            break;
+                        case 20:
+                            if (a.Name == "UtcTime" || a.Name == "ProcessId" || a.Name == "User")
+                            {
+                                grid.Columns[j].Width = 250f;
+                                if (a.Name != null)
+                                {
+                                    if (a.Name.Length > 30)
+                                    {
+                                        a.Name = a.Name.Substring(0, 30);
+                                    }
+                                }
+                                valueRow.Cells[j].Value = a.Name; // sets the column names
+                                valueRow.Cells[j].StringFormat = stringFormatCenter;
+                                j++;
+                            }
+                            break;
+                        case 21:
+                            if (a.Name == "UtcTime" || a.Name == "ProcessId" || a.Name == "User")
+                            {
+                                grid.Columns[j].Width = 250f;
+                                if (a.Name != null)
+                                {
+                                    if (a.Name.Length > 30)
+                                    {
+                                        a.Name = a.Name.Substring(0, 30);
+                                    }
+                                }
+                                valueRow.Cells[j].Value = a.Name; // sets the column names
+                                valueRow.Cells[j].StringFormat = stringFormatCenter;
+                                j++;
+                            }
+                            break;
+                        case 22:
+                            if (a.Name == "UtcTime" || a.Name == "QueryName" || a.Name == "Image" || a.Name == "ProcessId")
+                            {
+                                grid.Columns[j].Width = 187f;
+                                if (a.Name != null)
+                                {
+                                    if (a.Name.Length > 30)
+                                    {
+                                        a.Name = a.Name.Substring(0, 30);
+                                    }
+                                }
+                                valueRow.Cells[j].Value = a.Name; // sets the column names
+                                valueRow.Cells[j].StringFormat = stringFormatCenter;
+                                j++;
+                            }
+                            break;
+                    }
+                }
+
+                foreach (Event e in returnList)
+                {
+                    PdfGridRow nameRow = grid.Rows.Add(); // each embed event has a name
+                    int columnPointer = 0;
+                    foreach (var a in e.EventData.Data) // so for each event data, add it to the column then
+                    {
+                        // need to check if the column name is what we want based on the name
+                        switch (name)
+                        {
+                            case 1:
+                                if (a.Name == "UtcTime" || a.Name == "OriginalFileName" || a.Name == "User")
+                                {
+                                    grid.Columns[columnPointer].Width = 250f;
+                                    if (a.Text != null)
+                                    {
+                                        if (a.Text.Length > 30)
+                                        {
+                                            a.Text = a.Text.Substring(0, 30);
+                                        }
+                                    }
+                                    nameRow.Cells[columnPointer].Value = a.Text;
+                                    nameRow.Cells[columnPointer].StringFormat = stringFormatLeft;
+                                    columnPointer++;
+                                }
+                                break;
+                            case 2:
+                                if (a.Name == "UtcTime" || a.Name == "DestinationIp" || a.Name == "User")
+                                {
+                                    grid.Columns[columnPointer].Width = 250f;
+                                    if (a.Text != null)
+                                    {
+                                        if (a.Text.Length > 30)
+                                        {
+                                            a.Text = a.Text.Substring(0, 30);
+                                        }
+                                    }
+                                    nameRow.Cells[columnPointer].Value = a.Text;
+                                    nameRow.Cells[columnPointer].StringFormat = stringFormatLeft;
+                                    columnPointer++;
+                                }
+                                break;
+                            case 3:
+                                if (a.Name == "UtcTime" || a.Name == "DestinationIp" || a.Name == "ProcessId" || a.Name == "User")
+                                {
+                                    grid.Columns[columnPointer].Width = 187f;
+                                    if (a.Text != null)
+                                    {
+                                        if (a.Text.Length > 30)
+                                        {
+                                            a.Text = a.Text.Substring(0, 30);
+                                        }
+                                    }
+                                    nameRow.Cells[columnPointer].Value = a.Text;
+                                    nameRow.Cells[columnPointer].StringFormat = stringFormatLeft;
+                                    columnPointer++;
+                                }
+                                break;
+                            case 4:
+                                if (a.Name == "UtcTime" || a.Name == "State" || a.Name == "User")
+                                {
+                                    grid.Columns[columnPointer].Width = 250f;
+                                    if (a.Text != null)
+                                    {
+                                        if (a.Text.Length > 30)
+                                        {
+                                            a.Text = a.Text.Substring(0, 30);
+                                        }
+                                    }
+                                    nameRow.Cells[columnPointer].Value = a.Text;
+                                    nameRow.Cells[columnPointer].StringFormat = stringFormatLeft;
+                                    columnPointer++;
+                                }
+                                break;
+                            case 5:
+                                if (a.Name == "UtcTime" || a.Name == "ProcessId" || a.Name == "User")
+                                {
+                                    grid.Columns[columnPointer].Width = 250f;
+                                    if (a.Text != null)
+                                    {
+                                        if (a.Text.Length > 30)
+                                        {
+                                            a.Text = a.Text.Substring(0, 30);
+                                        }
+                                    }
+                                    nameRow.Cells[columnPointer].Value = a.Text;
+                                    nameRow.Cells[columnPointer].StringFormat = stringFormatLeft;
+                                    columnPointer++;
+                                }
+                                break;
+                            case 6:
+                                if (a.Name == "UtcTime" || a.Name == "ImageLoaded" || a.Name == "Signature" || a.Name == "User")
+                                {
+                                    grid.Columns[columnPointer].Width = 187f;
+                                    if (a.Text != null)
+                                    {
+                                        if (a.Text.Length > 30)
+                                        {
+                                            a.Text = a.Text.Substring(0, 30);
+                                        }
+                                    }
+                                    nameRow.Cells[columnPointer].Value = a.Text;
+                                    nameRow.Cells[columnPointer].StringFormat = stringFormatLeft;
+                                    columnPointer++;
+                                }
+                                break;
+                            case 7:
+                                if (a.Name == "UtcTime" || a.Name == "ProcessId" || a.Name == "User")
+                                {
+                                    grid.Columns[columnPointer].Width = 250f;
+                                    if (a.Text != null)
+                                    {
+                                        if (a.Text.Length > 30)
+                                        {
+                                            a.Text = a.Text.Substring(0, 30);
+                                        }
+                                    }
+                                    nameRow.Cells[columnPointer].Value = a.Text;
+                                    nameRow.Cells[columnPointer].StringFormat = stringFormatLeft;
+                                    columnPointer++;
+                                }
+                                break;
+                            case 8:
+                                if (a.Name == "UtcTime" || a.Name == "SourceImage" || a.Name == "TargetImage" || a.Name == "User")
+                                {
+                                    grid.Columns[columnPointer].Width = 187f;
+                                    if (a.Text != null)
+                                    {
+                                        if (a.Text.Length > 30)
+                                        {
+                                            a.Text = a.Text.Substring(0, 30);
+                                        }
+                                    }
+                                    nameRow.Cells[columnPointer].Value = a.Text;
+                                    nameRow.Cells[columnPointer].StringFormat = stringFormatLeft;
+                                    columnPointer++;
+                                }
+                                break;
+                            case 9:
+                                if (a.Name == "UtcTime" || a.Name == "ProcessId" || a.Name == "User")
+                                {
+                                    grid.Columns[columnPointer].Width = 250f;
+                                    if (a.Text != null)
+                                    {
+                                        if (a.Text.Length > 30)
+                                        {
+                                            a.Text = a.Text.Substring(0, 30);
+                                        }
+                                    }
+                                    nameRow.Cells[columnPointer].Value = a.Text;
+                                    nameRow.Cells[columnPointer].StringFormat = stringFormatLeft;
+                                    columnPointer++;
+                                }
+                                break;
+                            case 10:
+                                if (a.Name == "UtcTime" || a.Name == "ProcessId" || a.Name == "User")
+                                {
+                                    grid.Columns[columnPointer].Width = 250f;
+                                    if (a.Text != null)
+                                    {
+                                        if (a.Text.Length > 30)
+                                        {
+                                            a.Text = a.Text.Substring(0, 30);
+                                        }
+                                    }
+                                    nameRow.Cells[columnPointer].Value = a.Text;
+                                    nameRow.Cells[columnPointer].StringFormat = stringFormatLeft;
+                                    columnPointer++;
+                                }
+                                break;
+                            case 11:
+                                if (a.Name == "UtcTime" || a.Name == "ProcessId" || a.Name == "TargetFilename")
+                                {
+                                    grid.Columns[columnPointer].Width = 250f;
+                                    if (a.Text != null)
+                                    {
+                                        if (a.Text.Length > 30)
+                                        {
+                                            a.Text = a.Text.Substring(0, 30);
+                                        }
+                                    }
+                                    nameRow.Cells[columnPointer].Value = a.Text;
+                                    nameRow.Cells[columnPointer].StringFormat = stringFormatLeft;
+                                    columnPointer++;
+                                }
+                                break;
+                            case 12:
+                                if (a.Name == "UtcTime" || a.Name == "RuleName" || a.Name == "EventType")
+                                {
+                                    grid.Columns[columnPointer].Width = 250f;
+                                    if (a.Text != null)
+                                    {
+                                        if (a.Text.Length > 30)
+                                        {
+                                            a.Text = a.Text.Substring(0, 30);
+                                        }
+                                    }
+                                    nameRow.Cells[columnPointer].Value = a.Text;
+                                    nameRow.Cells[columnPointer].StringFormat = stringFormatLeft;
+                                    columnPointer++;
+                                }
+                                break;
+                            case 13:
+                                if (a.Name == "UtcTime" || a.Name == "RuleName" || a.Name == "EventType")
+                                {
+                                    grid.Columns[columnPointer].Width = 250f;
+                                    if (a.Text != null)
+                                    {
+                                        if (a.Text.Length > 30)
+                                        {
+                                            a.Text = a.Text.Substring(0, 30);
+                                        }
+                                    }
+                                    nameRow.Cells[columnPointer].Value = a.Text;
+                                    nameRow.Cells[columnPointer].StringFormat = stringFormatLeft;
+                                    columnPointer++;
+                                }
+                                break;
+                            case 14:
+                                if (a.Name == "UtcTime" || a.Name == "RuleName" || a.Name == "EventType")
+                                {
+                                    grid.Columns[columnPointer].Width = 250f;
+                                    if (a.Text != null)
+                                    {
+                                        if (a.Text.Length > 30)
+                                        {
+                                            a.Text = a.Text.Substring(0, 30);
+                                        }
+                                    }
+                                    nameRow.Cells[columnPointer].Value = a.Text;
+                                    nameRow.Cells[columnPointer].StringFormat = stringFormatLeft;
+                                    columnPointer++;
+                                }
+                                break;
+                            case 15:
+                                if (a.Name == "UtcTime" || a.Name == "TargetFileName" || a.Name == "Image")
+                                {
+                                    grid.Columns[columnPointer].Width = 250f;
+                                    if (a.Text != null)
+                                    {
+                                        if (a.Text.Length > 30)
+                                        {
+                                            a.Text = a.Text.Substring(0, 30);
+                                        }
+                                    }
+                                    nameRow.Cells[columnPointer].Value = a.Text;
+                                    nameRow.Cells[columnPointer].StringFormat = stringFormatLeft;
+                                    columnPointer++;
+                                }
+                                break;
+                            case 17:
+                                if (a.Name == "UtcTime" || a.Name == "ProcessId" || a.Name == "User")
+                                {
+                                    grid.Columns[columnPointer].Width = 250f;
+                                    if (a.Text != null)
+                                    {
+                                        if (a.Text.Length > 30)
+                                        {
+                                            a.Text = a.Text.Substring(0, 30);
+                                        }
+                                    }
+                                    nameRow.Cells[columnPointer].Value = a.Text;
+                                    nameRow.Cells[columnPointer].StringFormat = stringFormatLeft;
+                                    columnPointer++;
+                                }
+                                break;
+                            case 18:
+                                if (a.Name == "UtcTime" || a.Name == "ProcessId" || a.Name == "User")
+                                {
+                                    grid.Columns[columnPointer].Width = 250f;
+                                    if (a.Text != null)
+                                    {
+                                        if (a.Text.Length > 30)
+                                        {
+                                            a.Text = a.Text.Substring(0, 30);
+                                        }
+                                    }
+                                    nameRow.Cells[columnPointer].Value = a.Text;
+                                    nameRow.Cells[columnPointer].StringFormat = stringFormatLeft;
+                                    columnPointer++;
+                                }
+                                break;
+                            case 19:
+                                if (a.Name == "UtcTime" || a.Name == "ProcessId" || a.Name == "User")
+                                {
+                                    grid.Columns[columnPointer].Width = 250f;
+                                    if (a.Text != null)
+                                    {
+                                        if (a.Text.Length > 30)
+                                        {
+                                            a.Text = a.Text.Substring(0, 30);
+                                        }
+                                    }
+                                    nameRow.Cells[columnPointer].Value = a.Text;
+                                    nameRow.Cells[columnPointer].StringFormat = stringFormatLeft;
+                                    columnPointer++;
+                                }
+                                break;
+                            case 20:
+                                if (a.Name == "UtcTime" || a.Name == "ProcessId" || a.Name == "User")
+                                {
+                                    grid.Columns[columnPointer].Width = 250f;
+                                    if (a.Text != null)
+                                    {
+                                        if (a.Text.Length > 30)
+                                        {
+                                            a.Text = a.Text.Substring(0, 30);
+                                        }
+                                    }
+                                    nameRow.Cells[columnPointer].Value = a.Text;
+                                    nameRow.Cells[columnPointer].StringFormat = stringFormatLeft;
+                                    columnPointer++;
+                                }
+                                break;
+                            case 21:
+                                if (a.Name == "UtcTime" || a.Name == "ProcessId" || a.Name == "User")
+                                {
+                                    grid.Columns[columnPointer].Width = 250f;
+                                    if (a.Text != null)
+                                    {
+                                        if (a.Text.Length > 30)
+                                        {
+                                            a.Text = a.Text.Substring(0, 30);
+                                        }
+                                    }
+                                    nameRow.Cells[columnPointer].Value = a.Text;
+                                    nameRow.Cells[columnPointer].StringFormat = stringFormatLeft;
+                                    columnPointer++;
+                                }
+                                break;
+                            case 22:
+                                if (a.Name == "UtcTime" || a.Name == "QueryName" || a.Name == "Image" || a.Name == "ProcessId")
+                                {
+                                    grid.Columns[columnPointer].Width = 187f;
+                                    if (a.Text != null)
+                                    {
+                                        if (a.Text.Length > 30)
+                                        {
+                                            a.Text = a.Text.Substring(0, 30);
+                                        }
+                                    }
+                                    nameRow.Cells[columnPointer].Value = a.Text;
+                                    nameRow.Cells[columnPointer].StringFormat = stringFormatLeft;
+                                    columnPointer++;
+                                }
+                                break;
+                        }
+                    }
+                }
+                grid.Draw(page, 0, 600);
+                pdf.Pages.RemoveAt(0); // remove the first blank page
+                path = @"X:\Github\FreeEDR\API\Files\report_" + name + "_" + DateTime.Now.ToString("yyyy_dd_M_HH_mm_ss") + ".pdf";
+                pdf.SaveToFile(@"X:\Github\FreeEDR\API\Files\report_" + name + "_" + DateTime.Now.ToString("yyyy_dd_M_HH_mm_ss") + ".pdf");
+            }
+            else if (f == FormatOption.CSV)
+            {
+
+                path = @"X:\Github\FreeEDR\API\Files\report_" + name + "_" + DateTime.Now.ToString("yyyy_dd_M_HH_mm_ss") + ".csv";
+                if (!File.Exists(path))
+                {
+                    // Create a file to write to.
+                    using (StreamWriter sw = File.CreateText(path))
+                    {
+
+                        // first we need to get the a.Name's first
+                        Event e0 = returnList[0];
+                        for (int i = 0; i < e0.EventData.Data.Count; i++)
+                        {
+                            Data a = e0.EventData.Data[i]; // grab the data at the point
+                            if (i + 1 == e0.EventData.Data.Count)
+                            {
+                                sw.Write(a.Name);
+                            }
+                            else
+                            {
+                                sw.Write(a.Name + ",");
+                            }
+                        }
+                        sw.WriteLine("");
+                        foreach (Event e in returnList)
+                        {
+                            for (int i = 0; i < e.EventData.Data.Count; i++)
+                            {
+                                Data a = e.EventData.Data[i]; // grab the data at the point
+                                if (i + 1 == e.EventData.Data.Count)
+                                {
+                                    sw.Write(a.Text);
+                                }
+                                else
+                                {
+                                    sw.Write(a.Text + ",");
+                                }
+                            }
+                            sw.WriteLine("");
+                        }
+                    }
+                }
+            }
+            else if (f == FormatOption.TXT)
+            {
+                path = @"X:\Github\FreeEDR\API\Files\report_" + name + "_" + DateTime.Now.ToString("yyyy_dd_M_HH_mm_ss") + ".txt";
+                if (!File.Exists(path))
+                {
+                    // Create a file to write to.
+                    using (StreamWriter sw = File.CreateText(path))
+                    {
+                        foreach (Event e in returnList)
+                        {
+                            foreach (var a in e.EventData.Data)
+                            {
+                                sw.Write(a.Name + " " + a.Text + "|");
+                            }
+                            sw.WriteLine("");
+                        }
+                    }
+                }
+            }
+
+            return path;
         }
 
         // get all the different options for reports
